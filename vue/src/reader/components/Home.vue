@@ -1,0 +1,172 @@
+<template>
+  <div class="container">
+    <nav class="nav-header">
+      <header>
+        <a href="/" class="brand">移动书城</a>
+        <a href="/" class="avatar"></a>
+      </header>
+      <div class="swipe">
+        <el-carousel :interval="5000" arrow="always">
+          <el-carousel-item v-for="(image, index) in images" :key="index">
+            <img :src="image" alt="">
+          </el-carousel-item>
+        </el-carousel>
+      </div>
+    </nav>
+<!--    <nav class="home-nav">
+      <router-link
+          class="guide-nav-div"
+          v-for="(item, index) in type"
+          :to="{ path: 'category', query: { type: item.num } }"
+          :key="item.num"
+          @click="openBookCategory(item.num)">
+        <i class="icon icon-sort"></i>
+        <h4 class="guide-nav-h">{{ item.word }}</h4>
+      </router-link>
+    </nav>-->
+    <div v-if="!loading">
+      <Recommend :booklist="booklist | hot" title="热门小说" />
+      <Recommend :booklist="booklist | top" title="排行榜" />
+      <Recommend :booklist="booklist | free" title="限时免费" />
+      <BookList :datalist="booklist | newbook" title="新书抢鲜" />
+      <BookList :datalist="booklist | endbook" title="畅销完本" />
+      <BookList :datalist="booklist | like" title="猜你喜欢" />
+    </div>
+    <Loading v-show="loading" />
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import Recommend from './Common/Recommend.vue';
+import BookList from './Common/BookList.vue';
+import Loading from './Loading/Loading.vue';
+
+const booklist = ref([]);
+const type = ref([
+  { num: 1, word: '玄幻' },
+  { num: 2, word: '修真' },
+  { num: 3, word: '都市' },
+  { num: 4, word: '历史' },
+  { num: 5, word: '游戏' },
+]);
+const loading = ref(false);
+const images = [
+  getIcon("1.jpg"),
+  getIcon("2.jpg"),
+  getIcon("3.jpg"),
+  getIcon("4.jpg"),
+  getIcon("5.jpg"),
+];
+
+onMounted(() => {
+  getData();
+});
+function getIcon(name) {
+  return new URL(`../assets/images/${name}`, import.meta.url).href;
+}
+const getData = async () => {
+  loading.value = true;
+  try {
+    const res = await axios.get(`${common.api}/booklist`);
+    booklist.value = res.data;
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const openBookCategory = (num) => {
+  // Implement your logic here
+};
+</script>
+
+<!--
+<style lang="less" scoped>
+.container {
+  background-color: #f6f7f9;
+}
+
+.nav-header {
+  header {
+    display: flex;
+    height: 45px;
+    padding: 0 15px;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    text-indent: -8888px;
+
+    .brand {
+      width: 100px;
+      background: url(http://qidian.gtimg.com/qdm/img/logo-qdm.0.50.svg) no-repeat left;
+      background-size: 100%;
+    }
+
+    .avatar {
+      width: 24px;
+      height: 24px;
+      background: url(../assets/images/avatar.png) no-repeat center;
+      background-size: 100%;
+    }
+  }
+}
+
+.home-nav {
+  display: flex;
+  padding: 10px 0;
+  margin: 10px 0;
+  background-color: #fff;
+
+  .guide-nav-div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    > i {
+      width: 24px;
+      height: 24px;
+      background-image: url(../assets/images/sprite.0.50.png);
+    }
+
+    &:nth-of-type(1) {
+      i {
+        background-position: -63px -28px;
+      }
+    }
+    &:nth-of-type(2) {
+      i {
+        background-position: 0 0;
+      }
+    }
+    &:nth-of-type(3) {
+      i {
+        background-position: 0 -30px;
+      }
+    }
+    &:nth-of-type(4) {
+      i {
+        background-position: 0 -60px;
+      }
+    }
+    &:nth-of-type(5) {
+      i {
+        background-position: -30px -30px;
+      }
+    }
+  }
+}
+
+.swipe {
+  height: 170px;
+
+  img {
+    width: 100%;
+  }
+}
+</style>
+-->
