@@ -63,23 +63,10 @@ const images = [
   getIcon("4.jpg"),
   getIcon("5.jpg"),
 ];
-// 图片父容器高度
-const bannerHeight = ref(1000);
-// 浏览器宽度
-const screenWidth = ref(window.innerWidth);
 
-// 根据浏览器宽度(图片宽度)计算高度
-const setSize = () => {
-  bannerHeight.value = 400 / 1920 * screenWidth.value;
-};
 
 onMounted(() => {
   getData();
-  setSize(); // 首次加载时调用
-  window.addEventListener('resize', () => {
-    screenWidth.value = window.innerWidth;
-    setSize(); // 窗口大小发生改变时调用
-  });
 });
 /*动态导入图片*/
 function getIcon(name) {
