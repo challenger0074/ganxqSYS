@@ -64,7 +64,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .book-list {
   margin-top: 15px;
   padding: 15px;

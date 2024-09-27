@@ -52,7 +52,7 @@ const sub = () => {
 </script>
 
 
-<style lang="less">
+<style lang="less" scoped>
 .top-nav-pannel {
   position: fixed;
   bottom: 70px;

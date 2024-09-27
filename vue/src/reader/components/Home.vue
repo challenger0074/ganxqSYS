@@ -6,14 +6,18 @@
         <a href="/" class="avatar"></a>
       </header>
       <div class="swipe">
-        <el-carousel :interval="5000" arrow="always">
-          <el-carousel-item v-for="(image, index) in images" :key="index">
-            <img :src="image" alt="">
+        <el-carousel :interval="5000"    arrow="always"   >
+          <el-carousel-item v-for="(image, index) in images" :key="index" fit="contain" >
+            <div class="carousel-image-container">
+              <el-image
+                  :src="image"
+                  style="max-height: 100%; max-width: 100%;"></el-image>
+            </div>
           </el-carousel-item>
         </el-carousel>
       </div>
     </nav>
-<!--    <nav class="home-nav">
+    <nav class="home-nav">
       <router-link
           class="guide-nav-div"
           v-for="(item, index) in type"
@@ -23,7 +27,7 @@
         <i class="icon icon-sort"></i>
         <h4 class="guide-nav-h">{{ item.word }}</h4>
       </router-link>
-    </nav>-->
+    </nav>
     <div v-if="!loading">
       <Recommend :booklist="booklist | hot" title="热门小说" />
       <Recommend :booklist="booklist | top" title="排行榜" />
@@ -59,10 +63,25 @@ const images = [
   getIcon("4.jpg"),
   getIcon("5.jpg"),
 ];
+// 图片父容器高度
+const bannerHeight = ref(1000);
+// 浏览器宽度
+const screenWidth = ref(window.innerWidth);
+
+// 根据浏览器宽度(图片宽度)计算高度
+const setSize = () => {
+  bannerHeight.value = 400 / 1920 * screenWidth.value;
+};
 
 onMounted(() => {
   getData();
+  setSize(); // 首次加载时调用
+  window.addEventListener('resize', () => {
+    screenWidth.value = window.innerWidth;
+    setSize(); // 窗口大小发生改变时调用
+  });
 });
+/*动态导入图片*/
 function getIcon(name) {
   return new URL(`../assets/images/${name}`, import.meta.url).href;
 }
@@ -83,12 +102,24 @@ const openBookCategory = (num) => {
 };
 </script>
 
-<!--
 <style lang="less" scoped>
 .container {
+
   background-color: #f6f7f9;
 }
+.carousel-image-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  height: 100%; /* 使容器充满 carousel-item 的高度 */
+}
 
+.el-carousel-item {
+  display: flex; /* 使 carousel-item 也成为 flexbox */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  height: 100%; /* 确保高度为 100% */
+}
 .nav-header {
   header {
     display: flex;
@@ -112,6 +143,17 @@ const openBookCategory = (num) => {
       background-size: 100%;
     }
   }
+  .swipe  {
+
+    height: 300px;
+    /*position:relative;*/
+    img{
+    width: 100%; /* 宽度占满容器 */
+    height: auto; /* 高度自适应 */
+    object-fit: cover; /* 图片覆盖，不失真 */
+  }
+  }
+
 }
 
 .home-nav {
@@ -169,4 +211,3 @@ const openBookCategory = (num) => {
   }
 }
 </style>
--->

@@ -131,7 +131,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .ell {
   text-overflow: ellipsis;
   overflow: hidden;
