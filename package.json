@@ -1,0 +1,16 @@
+{
+  "name": "ganxqsys",
+  "version": "1.0.0",
+  "description": "control",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run web\" \"npm run serve\"",
+    "web": "cd vue&&npm run dev",
+    "serve": "cd server&&node reader.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
