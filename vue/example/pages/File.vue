@@ -2,7 +2,7 @@
   <div class="upload-download-container">
     <el-upload
         class="upload-demo"
-        action="api/upload"
+        action="file/upload"
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         :on-error="handleError"

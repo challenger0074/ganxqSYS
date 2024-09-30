@@ -19,8 +19,13 @@ export default defineConfig({
 		// 运行端口
 		port: 1648,
 	  proxy: {
-		  '/api': {
+		  '/file': {
 			  target: 'http://127.0.0.1:3000',
+			  changeOrigin: true,
+			  rewrite: (path) => path.replace(/^\/api/, '')
+		  },
+		  '/api': {
+			  target: 'http://127.0.0.1:3001',
 			  changeOrigin: true,
 			  rewrite: (path) => path.replace(/^\/api/, '')
 		  }

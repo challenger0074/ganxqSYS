@@ -67,7 +67,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import Similar from './Similar.vue';
-import Rate from 'components/rate/rate.vue';
+import Rate from './rate/rate.vue';
 import Loading from './Loading/Loading.vue';
 import { ElButton } from 'element-plus';
 

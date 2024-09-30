@@ -28,7 +28,7 @@ export default defineComponent({
       this.$store.dispatch('chooseBook', id);
     },
     loadImage(e) {
-      this.common.defaultImage(e);
+      this.$common.defaultImage(e);
     }
   }
 });

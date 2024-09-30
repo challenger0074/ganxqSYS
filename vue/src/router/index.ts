@@ -10,6 +10,9 @@ import Element from '@/pages/Element.vue'
 import EmployeeManager from "@/ganxq/Manager.vue"
 import Reader from  "@/reader/Reader.vue"
 import ReaderHome from "@/reader/components/Home.vue"
+import ReaderPage from "@/reader/components/Reader.vue"
+import BookDetail from "@/reader/components/BookDetail.vue"
+import Category from "@/reader/components/Category.vue"
   export const router= createRouter({
     history:createWebHistory(),//路由的工作模式
     routes:[//一个一个的路由规则
@@ -23,7 +26,7 @@ import ReaderHome from "@/reader/components/Home.vue"
             component:Login
         },
         {
-            name:'reader',
+            name:'readerWeb',
             path:'/reader',
             component:Reader,
             children:[
@@ -36,7 +39,22 @@ import ReaderHome from "@/reader/components/Home.vue"
                     path:'home',
                     component:ReaderHome,
                     props:true
-                }
+                },
+                {
+                    path: '/reader/:id',
+                    name: 'reader',
+                    component: ReaderPage,
+                },
+                {
+                    path: '/bookdetail/:id',
+                    name: 'bookdetail',
+                    component: BookDetail,
+                },
+                {
+                    path: '/category',
+                    name: 'category',
+                    component: Category,
+                },
             ]
         },
         {

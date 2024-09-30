@@ -1,11 +1,11 @@
 <template>
-  <div class="list-panel" @touchmove:prevent>
+  <div class="list-panel" >
     <div class="list">
       <div class="list-nav">
         <i class="back" @click="hideListPanel"></i>
         <h3>目录</h3>
       </div>
-      <div class="list-content" @touchmove:prevent>
+      <div class="list-content" >
         <el-scrollbar>
           <ul>
             <li v-for="(item, index) in chapterList" :key="index" @click="jumpTo(index)">

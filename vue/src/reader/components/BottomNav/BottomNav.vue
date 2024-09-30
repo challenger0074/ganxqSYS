@@ -1,45 +1,45 @@
 <template>
-  <div v-if="bar" class="bottom-nav bottom_nav">
-    <el-button class="item menu-button" @click="showListPanel">
+  <div class="bottom-nav bottom_nav" v-show="bar">
+    <div class="item menu-button" id="menu_button" @click="showListPanel">
       <div class="item-warp">
-        <el-icon><menu /></el-icon>
-        <span>目录</span>
+        <div class="icon-menu"></div>
+        <div class="icon-text">
+          目录
+        </div>
       </div>
-    </el-button>
-    <el-button class="item" :class="{'current': font_icon_class}" @click="showFontPanel">
+    </div>
+    <div class="item" :class="{'current': font_icon_class}" id="font-button" @click="showFontPanel">
       <div class="item-warp">
-        <el-icon><font-size /></el-icon>
-        <span>字体</span>
+        <div class="icon-ft"></div>
+        <div class="icon-text">
+          字体
+        </div>
       </div>
-    </el-button>
-    <el-button class="item" @click="swithNight">
-      <div class="item-warp" v-show="!isNightMode">
-        <el-icon><sun /></el-icon>
-        <span>白天</span>
+    </div>
+    <div class="item" id="night-button" @click="swithNight">
+      <div class="item-warp" style="display:none" >
+        <div class="icon-day"></div>
+        <div class="icon-text">
+          白天
+        </div>
       </div>
-      <div class="item-warp" v-show="isNightMode">
-        <el-icon><moon /></el-icon>
-        <span>夜间</span>
+      <div class="item-warp">
+        <div class="icon-night"></div>
+        <div class="icon-text">
+          夜间
+        </div>
       </div>
-    </el-button>
+    </div>
   </div>
 </template>
 
 <script>
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'vuex';
-import { ElButton, ElIcon } from 'element-plus';
-import { Menu, FontSize, Sun, Moon } from '@element-plus/icons-vue';
+
 
 export default defineComponent({
-  components: {
-    ElButton,
-    ElIcon,
-    Menu,
-    FontSize,
-    Sun,
-    Moon,
-  },
+
   setup() {
     const store = useStore();
     const font_icon_class = computed(() => store.state.font_panel);

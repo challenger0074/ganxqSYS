@@ -29,23 +29,25 @@
       </router-link>
     </nav>
     <div v-if="!loading">
-      <Recommend :booklist="booklist | hot" title="热门小说" />
-      <Recommend :booklist="booklist | top" title="排行榜" />
-      <Recommend :booklist="booklist | free" title="限时免费" />
-      <BookList :datalist="booklist | newbook" title="新书抢鲜" />
-      <BookList :datalist="booklist | endbook" title="畅销完本" />
-      <BookList :datalist="booklist | like" title="猜你喜欢" />
+      <Recommend :booklist="hotBooks" title="热门小说" />
+      <Recommend :booklist="topBooks" title="排行榜" />
+      <Recommend :booklist="freeBooks" title="限时免费" />
+      <BookList :datalist="newBooks" title="新书抢鲜" />
+      <BookList :datalist="endBooks" title="畅销完本" />
+      <BookList :datalist="likeBooks" title="猜你喜欢"/>
     </div>
     <Loading v-show="loading" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, getCurrentInstance, computed} from 'vue';
 import axios from 'axios';
 import Recommend from './Common/Recommend.vue';
 import BookList from './Common/BookList.vue';
 import Loading from './Loading/Loading.vue';
+
+
 
 const booklist = ref([]);
 const type = ref([
@@ -64,7 +66,13 @@ const images = [
   getIcon("5.jpg"),
 ];
 
-
+// 计算属性
+const hotBooks = computed(() => booklist.value.filter(book => book.hot === true));
+const topBooks = computed(() => booklist.value.slice(0, 10)); // 取前 10 本
+const freeBooks = computed(() => booklist.value.filter(book => book.free === true));
+const newBooks = computed(() => booklist.value.slice(-10)); // 取最后 10 本
+const endBooks = computed(() => booklist.value.filter(book => book.end === true));
+const likeBooks = computed(() => booklist.value.filter(book => book.like === true));
 onMounted(() => {
   getData();
 });
@@ -75,7 +83,7 @@ function getIcon(name) {
 const getData = async () => {
   loading.value = true;
   try {
-    const res = await axios.get(`${common.api}/booklist`);
+    const res = await axios.get(`${$common2.api}/booklist`);
     booklist.value = res.data;
   } catch (error) {
     console.error(error);
