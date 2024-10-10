@@ -9,7 +9,9 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
 // 设置 multer 存储选项
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {

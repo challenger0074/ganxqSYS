@@ -1,7 +1,6 @@
 <template>
   <div class="rate-score">
-    <el-rate :value="score" :disabled="true" :show-text="false" :icon-classes="itemClasses"></el-rate>
-    {{ score }}
+    <span class="star-item" :class="item" v-for="(item,index) in itemClasses"></span>{{score}}
   </div>
 </template>
 

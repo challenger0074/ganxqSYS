@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, getCurrentInstance} from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import { ElScrollbar } from 'element-plus';
@@ -30,7 +30,8 @@ const props = defineProps({
     required: true
   }
 });
-
+const  instance=getCurrentInstance();
+const $common=instance.appContext.config.globalProperties.$common;
 const chapterList = ref([]);
 const store = useStore();
 
@@ -49,8 +50,11 @@ const hideListPanel = () => {
 };
 
 const getList = async () => {
-  const res = await axios.get(`${store.state.common.api}/titles?id=${props.bookId}`);
-  chapterList.value = res.data.titles.split('-');
+  const {res} = await axios.get(`${$common.api}/titles?id=${props.bookId}`);
+  console.log("TItle"+res)
+  if (res && res.titles) {
+    chapterList.value = res.titles.split('-');
+  }
 };
 
 onMounted(() => {

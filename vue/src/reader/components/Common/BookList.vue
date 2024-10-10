@@ -7,7 +7,7 @@
           <li v-for="item in datalist" :key="item.id">
             <router-link :to="{ path: '/bookdetail/' + item.id }" @click.native="bookDetailId(item.id)">
               <div class="book-image">
-                <img :src="item.images" alt="">
+                <img :src="item.images" alt="" @error="loadImage">
               </div>
               <div class="book-detail">
                 <h3>{{ item.name }}</h3>
@@ -31,9 +31,10 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import {defineComponent, getCurrentInstance} from 'vue';
 
 export default defineComponent({
+
   props: {
     datalist: Array,
     title: String,
@@ -41,6 +42,9 @@ export default defineComponent({
   methods: {
     bookDetailId(id) {
       this.$store.dispatch('chooseBook', id);
+    },
+    loadImage(e) {
+      this.$common.defaultImage(e)
     },
   },
   filters: {

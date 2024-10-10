@@ -1,6 +1,8 @@
 <template>
   <div v-if="bar" class="top-nav">
-    <el-button class="icon-back" @click="back" icon="el-icon-arrow-left"></el-button>
+    <div class="icon-back">
+      <a href="" @click="back"></a>
+    </div>
     <div class="nav-title">返回书架</div>
   </div>
 </template>

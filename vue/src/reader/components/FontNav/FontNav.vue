@@ -2,12 +2,12 @@
   <div class="top-nav-pannel font-container" id="font-container" v-if="font_panel">
     <div class="child-mod">
       <span>字号</span>
-      <el-button id="large-font" class="spe-button" @click="add">
+      <button id="large-font" class="spe-button" @click="add">
         大
-      </el-button>
-      <el-button id="small-font" class="spe-button" @click="sub" style="margin-left: 10px;">
+      </button>
+      <button id="small-font" class="spe-button" @click="sub" style="margin-left:10px;">
         小
-      </el-button>
+      </button>
     </div>
     <div class="child-mod" id="bk-container">
       <span>背景</span>

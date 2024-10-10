@@ -1,7 +1,7 @@
 <template>
   <div id="reader">
-    <TopNav />
-    <div class="read-container" :bg="bg_color" :night="bg_night" ref="fz_size">
+    <TopNav/>
+    <div class="read-container" :style="{ backgroundColor: bg_color, color: bg_night ? '#fff' : '#555' }" ref="fz_size">
       <h4>{{ title }}</h4>
       <div class="chapterContent" v-if="!loading">
         <p v-for="(c, i) in content" :key="i">{{ c }}</p>
@@ -17,17 +17,18 @@
     <div class="click-mask" @click="clickBar"></div>
     <div class="page-down" @click="pageDown()"></div>
     <div class="top-nav-pannel-bk font-container" v-if="font_panel"></div>
-    <FontNav />
-    <BottomNav />
-    <Cover :class="{ hide: !list_panel }" />
-    <ListPanel :class="{ show: list_panel }" :bookId="$route.params.id" />
-    <Loading v-if="loading" />
+    <FontNav/>
+    <BottomNav/>
+    <Cover :class="{ hide: !list_panel }"/>
+    <ListPanel :class="{ show: list_panel }" :bookId="$route.params.id"/>
+    <Loading v-if="loading"/>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import {ref, computed, watch, onMounted, getCurrentInstance} from 'vue';
+import {useStore} from 'vuex';
+import {useRoute} from 'vue-router';
 import axios from 'axios';
 import localEvent from '../store/local';
 import TopNav from './TopNav/TopNav.vue';
@@ -37,80 +38,137 @@ import ListPanel from './ListPanel/ListPanel.vue';
 import Cover from './Cover.vue';
 import Loading from './Loading/Loading.vue';
 
+const instance = getCurrentInstance();
+const $common = instance.appContext.config.globalProperties.$common;
+// Use router and store
+const routes = useRoute();
 const store = useStore();
 
-const bar = ref(false);
+// Initialize refs
 const title = ref('');
 const content = ref([]);
 const loading = ref(false);
 const booksReadInfo = ref({});
-const fz_size = computed(() => store.state.fz_size);
-const bg_color = computed(() => store.state.bg_color);
-const bg_night = computed(() => store.state.bg_night);
-const list_panel = computed(() => store.state.list_panel);
-const curChapter = computed(() => store.state.curChapter);
+const cacheData = ref({});
 
-const getData = async (id, chapter) => {
+// Computed properties
+const fz_size = computed(() => store.getters.getFzSize);
+const bg_color = computed(() => store.getters.getBgColor);
+const bg_night = computed(() => store.getters.getBgNight);
+const list_panel = computed(() => store.getters.getListPanel);
+const curChapter = computed(() => store.getters.getCurChapter);
+
+// Fetch data function
+const fetchData = async (id, chapter) => {
+console.log("chapter"+chapter);
+
   loading.value = true;
   try {
-    const { data } = await axios.get(`${store.state.api}/book?book=${id}&id=${chapter}`);
+    const {data} = await axios.get(`${$common.api}/book?book=${id}&id=${chapter}`);
     title.value = data.title;
-    content.value = data.content.split('-');
+/*    console.log('Data fetched:', data); // Check the fetched data
+    console.log('Content:', data.content); // Log the specific content*/
+    if (data && data.content) {
+      content.value = data.content.split('-');
+    } else {
+      console.error("data.content is undefined or null");
+    }
+    cacheData.value[id] = cacheData.value[id] || {};
+    cacheData.value[id][chapter] = {title: data.title, content: data.content.split('-')};
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    // Handle error (e.g., show notification)
+    // alert('加载失败，请稍后再试！');
   } finally {
     loading.value = false;
   }
 };
 
+// Save book info to local storage
 const saveBooksInfo = () => {
-  const id = store.state.id; // 假设ID存储在 Vuex 中
-  booksReadInfo.value[id] = {
+  const id = routes.params.id;
+  booksReadInfo.value = {
     book: id,
     chapter: curChapter.value,
   };
   localEvent.StorageSetter('bookreaderinfo', booksReadInfo.value);
 };
 
+// Navigation functions
 const prevChapter = () => {
   store.dispatch('prevChapter');
   saveBooksInfo();
-  setTimeout(() => { document.body.scrollTop = 0; }, 300);
+  setTimeout(() => {
+    document.body.scrollTop = 0;
+  }, 300);
 };
 
 const nextChapter = () => {
   store.dispatch('nextChapter', 50);
   saveBooksInfo();
-  setTimeout(() => { document.body.scrollTop = 0; }, 300);
+  setTimeout(() => {
+    document.body.scrollTop = 0;
+  }, 300);
 };
 
+// Lifecycle hooks
 onMounted(() => {
-  const id = store.state.id; // 假设ID存储在 Vuex 中
+  console.log("localEvent.StorageGetter('ceshi')");
+  localEvent.StorageSetter('ceshi',"feixiang");
+  console.log("localEvent.StorageGetter('ceshi')"+localEvent.StorageGetter('ceshi'));
+  const fzSize = localEvent.StorageGetter('fz_size');
+  const bgColor = localEvent.StorageGetter('bg_color');
   const localBookReaderInfo = localEvent.StorageGetter('bookreaderinfo');
-  if (localBookReaderInfo && localBookReaderInfo[id]) {
-    booksReadInfo.value = localBookReaderInfo;
-    getData(id, booksReadInfo.value[id].chapter);
-    store.dispatch('curChapter', booksReadInfo.value[id].chapter);
-  } else {
-    booksReadInfo.value[id] = { book: id, chapter: 1 };
-    getData(id, 1);
-    store.dispatch('curChapter', 1);
+  const id = routes.params.id;
+
+  // Load settings from localStorage
+  if (fzSize) {
+    store.dispatch('setFzSize', fzSize);
   }
+
+  if (bgColor) {
+    store.dispatch('setBgColor', bgColor);
+  }
+  console.log("localBookReaderInfo"+localBookReaderInfo.value)
+  // Load book info
+  if (localBookReaderInfo.value&& localBookReaderInfo.value?.id!==id) {
+    console.log("localBookReaderInfo"+localBookReaderInfo.value)
+    booksReadInfo.value = localBookReaderInfo.value;
+    if (localBookReaderInfo.value?.chapter){
+      fetchData(id, booksReadInfo.value.chapter);
+      store.dispatch('curChapter', booksReadInfo.value.chapter);
+    }
+  } else {//第一次进入
+    console.log("第一次进入")
+    booksReadInfo.value = {
+        book: id,
+        chapter: 1,
+      };
+    fetchData(id, booksReadInfo.value?.chapter);
+    store.dispatch('curChapter', booksReadInfo.value.chapter);
+    saveBooksInfo();
+    }
+  console.log("shuben" + id);
+  /*console.log(content.value)*/
 });
 
+
+// Watch for chapter changes
 watch(curChapter, (val) => {
   localEvent.StorageSetter('cur_chapter', val);
   saveBooksInfo();
-  getData(store.state.id, val);
+  fetchData(routes.params.id, val);
 });
 </script>
 
 <style lang="less" scoped>
-/* 样式部分保持不变 */
 .read-container {
   font-size: 16px;
   color: #555;
   line-height: 31px;
   min-height: 600px;
   padding: 15px;
+
   h4 {
     position: fixed;
     top: 0;
@@ -126,12 +184,12 @@ watch(curChapter, (val) => {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
   p {
     text-indent: 2em;
     margin: 0.5em 0;
     text-align: justify;
     line-height: 1.5;
   }
-  /* 其他样式 */
 }
 </style>

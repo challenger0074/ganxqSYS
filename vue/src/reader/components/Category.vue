@@ -35,13 +35,15 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import {ref, computed, onMounted, getCurrentInstance} from 'vue';
 import axios from 'axios';
 import { useStore } from 'vuex';
 import { ElLoading } from 'element-plus';
 
 export default {
   setup() {
+    const instance = getCurrentInstance();
+    const $common = instance.appContext.config.globalProperties.$common;
     const categoryList = ref([]);
     const loading = ref(false);
     const store = useStore();
@@ -49,7 +51,7 @@ export default {
     const getCategory = async (type) => {
       loading.value = true;
       try {
-        const res = await axios.get(`${this.common.api}/type?type=${type}`);
+        const res = await axios.get(`${$common.api}/type?type=${type}`);
         categoryList.value = res.data;
       } finally {
         loading.value = false;

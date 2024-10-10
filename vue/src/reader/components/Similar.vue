@@ -8,11 +8,12 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import {getCurrentInstance, ref, watch} from 'vue';
 import axios from 'axios';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-
+const instance = getCurrentInstance();
+const $common = instance.appContext.config.globalProperties.$common;
 const props = defineProps({
   like: {
     type: String,
@@ -25,7 +26,7 @@ const router = useRouter();
 const store = useStore();
 
 const getBookDetail = async (id) => {
-  const res = await axios.get(`${common.api}/booklist?id=${id}`);
+  const res = await axios.get(`${$common.api}/booklist?id=${id}`);
   bookDetail.value = res.data;
 };
 
@@ -35,7 +36,7 @@ const toBookDetail = (id) => {
 };
 
 const loadImage = (e) => {
-  common.defaultImage(e);
+  $common.defaultImage(e);
 };
 
 // Fetch book details on created

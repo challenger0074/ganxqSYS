@@ -26,14 +26,14 @@
         </div>
         <div class="read-btn" v-if="!loading">
           <div>
-            <ElButton type="primary" @click="openBook">
+            <Button type="primary" @click="openBook">
               <router-link :to="{ path: '/reader/' + bookDetail.id }">开始阅读</router-link>
-            </ElButton>
+            </Button>
           </div>
           <div>
-            <ElButton @click="openBook">
+            <Button @click="openBook">
               <router-link :to="{ path: '/reader/' + bookDetail.id }">开始阅读</router-link>
-            </ElButton>
+            </Button>
           </div>
         </div>
       </div>
@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, watch } from 'vue';
+import {defineComponent, ref, computed, watch, getCurrentInstance} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import axios from 'axios';
@@ -80,12 +80,14 @@ export default defineComponent({
     const showmore = ref(false);
     const route = useRoute();
     const router = useRouter();
-    const store = useStore();
+    const instance=getCurrentInstance();
+    const  store=useStore();
+    const $common = instance.appContext.config.globalProperties.$common;
 
     const getBookDetail = async (bookId) => {
       loading.value = true;
       try {
-        const res = await axios.get(`${store.state.common.api}/booklist?id=${bookId}`);
+        const res = await axios.get(`${$common.api}/booklist?id=${bookId}`);
         bookDetail.value = res.data;
         likes.value = res.data.like.split('-');
       } catch (error) {
@@ -106,6 +108,7 @@ export default defineComponent({
 
     const loadImage = (e) => {
       // 使用默认图片的逻辑
+      return  $common.defaultImage(e)
     };
 
     watch(
@@ -132,6 +135,8 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
+
+
 .ell {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -238,6 +243,21 @@ export default defineComponent({
         font-size: 15px;
         border: none;
         border-radius: 3px;
+      }
+      &:first-of-type {
+        button {
+          background-color: #ed424b;
+          a {
+            color: #fff;
+          }
+        }
+      }
+      &:nth-child(2) {
+        button {
+          color: #333;
+          background-color: #fff;
+          border: 1px solid #ddd;
+        }
       }
     }
   }

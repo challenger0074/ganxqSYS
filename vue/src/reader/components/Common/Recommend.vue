@@ -2,36 +2,35 @@
   <div class="recommend">
     <h2 class="title">{{ title }}</h2>
     <div class="list">
-      <el-carousel>
-        <el-carousel-item v-for="(item, index) in booklist" :key="index">
+      <ul class="list-ul">
+        <li class="list-li" v-for="(item, index) in booklist" :key="item.id">
           <router-link :to="{ path: '/bookdetail/' + item.id }" @click.native="bookDetailId(item.id)">
-            <img :src="item.images" alt="" @error="loadImage($event)">
+            <img :src="item.images" alt="" @error="loadImage($event)" />
             <p class="book-name">{{ item.name }}</p>
             <p class="book-author">{{ item.author }}</p>
           </router-link>
-        </el-carousel-item>
-      </el-carousel>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
+<script setup>
+import {defineProps, getCurrentInstance} from 'vue';
+import { useStore } from 'vuex';
+const  instance=getCurrentInstance();
+const $common=instance.appContext.config.globalProperties.$common
+const props = defineProps(['booklist', 'title']);
+const store = useStore();
 
-export default defineComponent({
-  props: {
-    booklist: Array,
-    title: String,
-  },
-  methods: {
-    bookDetailId(id) {
-      this.$store.dispatch('chooseBook', id);
-    },
-    loadImage(e) {
-      this.$common.defaultImage(e);
-    }
-  }
-});
+const bookDetailId = (id) => {
+  store.dispatch('chooseBook', id);
+};
+
+const loadImage = (event) => {
+  // Assuming 'common' is imported or available in your context
+  $common.defaultImage(event);
+};
 </script>
 
 <style lang="less" scoped>
