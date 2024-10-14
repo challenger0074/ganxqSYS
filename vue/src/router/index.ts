@@ -13,6 +13,8 @@ import ReaderHome from "@/reader/components/Home.vue"
 import ReaderPage from "@/reader/components/Reader.vue"
 import BookDetail from "@/reader/components/BookDetail.vue"
 import Category from "@/reader/components/Category.vue"
+import loginForm from '@/pages/login/loginForm.vue'
+import Test from '@/pages/Test.vue'
   export const router= createRouter({
     history:createWebHistory(),//路由的工作模式
     routes:[//一个一个的路由规则
@@ -24,6 +26,11 @@ import Category from "@/reader/components/Category.vue"
             name:'login',
             path:'/login',
             component:Login
+        },
+        {
+            name:'test',
+            path:'/test',
+            component:Test
         },
         {
             name:'readerWeb',

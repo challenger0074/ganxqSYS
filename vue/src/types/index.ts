@@ -1,4 +1,6 @@
 //定义一个接口,限制person对象的具体属性
+import {getCurrentInstance, inject} from "vue/dist/vue";
+
 export interface PersonInter{
     id:string,
     name:string,
@@ -17,3 +19,8 @@ export interface employee{
     status: string
 }
 
+export interface toast{
+
+    open:Object
+
+}
