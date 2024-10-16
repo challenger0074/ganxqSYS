@@ -1,7 +1,7 @@
 // 自写插件
 
 import Toast from './Toast.vue'
-import { createApp } from 'vue'
+import {createApp, provide} from 'vue'
 
 const obj = {}
 
@@ -22,6 +22,12 @@ obj.install = (app) => {
 
     // 4. 定义全局($toast即是此插件的名称)
     app.config.globalProperties.$toast = instance;
+    // 在组件树的根部提供实例，使其在组件树中的所有子组件都可以访问
+    app.mixin({
+        beforeCreate() {
+            provide('$toast', instance)
+        }
+    })
 }
 
 export default obj;

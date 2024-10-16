@@ -15,6 +15,7 @@ import BookDetail from "@/reader/components/BookDetail.vue"
 import Category from "@/reader/components/Category.vue"
 import loginForm from '@/pages/login/loginForm.vue'
 import Test from '@/pages/Test.vue'
+import Register from '@/pages/login/registerForm.vue'
   export const router= createRouter({
     history:createWebHistory(),//路由的工作模式
     routes:[//一个一个的路由规则
@@ -26,6 +27,11 @@ import Test from '@/pages/Test.vue'
             name:'login',
             path:'/login',
             component:Login
+        },
+        {
+            name:'register',
+            path:'/register',
+            component:Register
         },
         {
             name:'test',

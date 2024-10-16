@@ -6,7 +6,7 @@
   <div active-class="xiangying">
     <RouterLink :to="{name:'login'}" active-class="xiangying">登录</RouterLink>
     <span>/</span>
-    <RouterLink v-show="state" :to="{name:'login'}" active-class="xiangying">注册</RouterLink>
+    <RouterLink v-show="state" :to="{name:'register'}" active-class="xiangying">注册</RouterLink>
   </div>
 </template>
 

@@ -27,6 +27,7 @@
               Submit
             </el-button>
             <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+            <el-button @click="register()">Regist</el-button>
           </el-form-item>
         </el-form>
 
@@ -123,6 +124,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
+}
+const  register=()=>{
+  router.push('register')
 }
 </script>
 <style lang="less" scoped>
