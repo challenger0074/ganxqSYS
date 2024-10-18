@@ -25,5 +25,7 @@ const state = storeToRefs(useLoginState()).islogin
   color: #007bff;
   font-weight: bold;
 }
-
 </style>
+<!--<RouterLink to="/home" active-class="xiangying">首页</RouterLink>
+to="/home"的写法如果有/则会从最上级开始找，如果没有则从当前路径开始找,例子如Welcome.vue中写法
+-->

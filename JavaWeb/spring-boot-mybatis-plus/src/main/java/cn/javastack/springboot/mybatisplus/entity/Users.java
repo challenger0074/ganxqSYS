@@ -43,6 +43,14 @@ public class Users implements Serializable {
     @TableField("email")
     private String email;
 
+    @ApiModelProperty("角色")
+    @TableField("role")
+    private String role;
+
+    @ApiModelProperty("状态")
+    @TableField("state")
+    private boolean state;
+
     @ApiModelProperty("账户创建时间")
     @TableField("created_at")
     private LocalDateTime createdAt;

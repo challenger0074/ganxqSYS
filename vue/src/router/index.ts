@@ -16,6 +16,8 @@ import Category from "@/reader/components/Category.vue"
 import loginForm from '@/pages/login/loginForm.vue'
 import Test from '@/pages/Test.vue'
 import Register from '@/pages/login/registerForm.vue'
+import UserList  from "@/pages/UserList.vue"
+import Welcome  from "@/pages/Welcome.vue";
   export const router= createRouter({
     history:createWebHistory(),//路由的工作模式
     routes:[//一个一个的路由规则
@@ -42,6 +44,7 @@ import Register from '@/pages/login/registerForm.vue'
             name:'readerWeb',
             path:'/reader',
             component:Reader,
+            redirect:'/reader/home',
             children:[
                /* {
                     path: '/',
@@ -83,7 +86,20 @@ import Register from '@/pages/login/registerForm.vue'
         {
         name:'home1',
         path:'/home',
-        component:Home
+        component:Home,
+            redirect:'/home/welcome',
+            children:[
+                {
+                    name:'welcome',
+                    path:'welcome',
+                    component:Welcome
+                },
+                {
+                    name:'user',
+                    path:'user',
+                    component:UserList
+                }
+            ]
         },
     {
         name:'about1',

@@ -2,10 +2,13 @@ package cn.javastack.springboot.mybatisplus.service.impl;
 
 import cn.javastack.springboot.mybatisplus.entity.Users;
 import cn.javastack.springboot.mybatisplus.mapper.UsersMapper;
+import cn.javastack.springboot.mybatisplus.model.QueryInfo;
 import cn.javastack.springboot.mybatisplus.service.IUsersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -25,4 +28,32 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
 
         return mapper.insert2User(entity);
     }
+
+    @Override
+    public int getUserCounts(String username) {
+        // 模糊查询
+        int userCounts = mapper.getUserCounts("%"+username+"%");
+        return userCounts;
+    }
+
+    @Override
+    public List<Users> userList(QueryInfo queryInfo) {
+
+        //从哪里开始查询
+        int pageStart = (queryInfo.getPageNum()-1)*queryInfo.getPageSize();
+        System.out.println("$$$$$$$$$$$$$$$$$"+pageStart);
+        List<Users> userList = mapper.getAllUser("%"+queryInfo.getQuery()+"%",pageStart,queryInfo.getPageSize());
+       int SIZE = queryInfo.getPageSize();
+        System.out.println("$$$$$$$$$$$$$$$$$"+SIZE);
+        return userList;
+    }
+
+    @Override
+    public void createUser(Users user) {
+        mapper.insert(user);//mybatisplus封装
+    }
+
+    // 其他方法
+
+
 }

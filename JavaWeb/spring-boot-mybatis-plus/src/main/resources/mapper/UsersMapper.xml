@@ -8,6 +8,8 @@
         <result property="username" column="username"/>
         <result property="password" column="password"/>
         <result property="email" column="email"/>
+        <result property="role" column="role"/>
+        <result property="state" column="state"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
     </resultMap>
@@ -16,4 +18,26 @@
         INSERT INTO users (username, password, email, created_at, updated_at)
         VALUES (#{username}, #{password}, #{email}, #{createdAt}, #{updatedAt})
     </insert>
+    <select id="getAllUser" resultMap="UserResultMap">
+        SELECT * FROM `users`
+        <if test="username != null and username != ''">
+            WHERE username LIKE #{username}
+        </if>
+        LIMIT #{pageStart}, #{pageSize}
+    </select>
+
+
+    <!--<select id="getAllUser" resultMap="UserResultMap">
+        SELECT * FROM `users`
+        <if test="username != null and username != ''">
+            WHERE username LIKE CONCAT('%', #{username}, '%')
+        </if>
+        LIMIT #{pageStart}, #{pageSize}
+    </select>-->
+    <select id="getUserCounts" resultType="java.lang.Integer">
+        SELECT count(*) FROM `users`
+        <if test="username!=null">
+            WHERE username like #{username}
+        </if>
+    </select>
 </mapper>
