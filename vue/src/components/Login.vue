@@ -101,14 +101,17 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       if (valid) {
         console.log('Validation succeeded, submitting data...');
         const user = await service.get('/users/find');
-        console.log(toast)
+        console.log("toast对象",toast)
         const message = `login,success!
         welcome:${user.username}`;
         const duration = 2000; // 显示2秒
         const data=toast.show(message,duration)
+        //localStorage.setItem('token', JSON.stringify(user));浏览器会话结束后数据不会消失
         window.sessionStorage.setItem('user', JSON.stringify(user));
-        console.log(data)
+        window.sessionStorage.setItem('ms_token',user);
+        window.sessionStorage.setItem('ms_username',user.username);
         console.log('Response from API:', user);
+        console.log('User data:', JSON.stringify(user));
         router.push('reader/home')
         // Optionally, provide user feedback here
       } else {

@@ -12,7 +12,8 @@
   <version>1.0</version>
 
   <modules>
-    <module>spring-boot-mybatis-plus</module>
+      <module>dbControl</module>
+      <module>security</module>
   </modules>
 
   <packaging>pom</packaging>
@@ -20,7 +21,15 @@
   <description>Spring Boot </description>
 
   <url>http://maven.apache.org</url>
-
+  <!-- 管理子模块统一的版本号 -->
+  <properties>
+    <java.version>1.8</java.version>
+    <thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
+    <!--<mysql.version>8.0.15</mysql.version>-->
+    <shiro.version>1.4.0</shiro.version>
+    <spring-boot.version>3.3.0</spring-boot.version>
+    <shiro-redis.version>2.4.2.1-RELEASE</shiro-redis.version>
+  </properties>
   <dependencies>
     <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
     <dependency>
