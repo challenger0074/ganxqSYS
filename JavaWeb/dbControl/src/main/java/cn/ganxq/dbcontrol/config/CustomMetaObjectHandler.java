@@ -5,10 +5,7 @@ import org.apache.ibatis.reflection.MetaObject;
 
 import java.time.LocalDateTime;
 
-/**
- * 自定义填充
- * 微信公众号：Java技术栈
- */
+
 public class CustomMetaObjectHandler implements MetaObjectHandler {
 
     @Override

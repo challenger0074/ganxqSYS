@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -12,8 +12,8 @@
   <version>1.0</version>
 
   <modules>
-      <module>dbControl</module>
-      <module>security</module>
+    <module>dbControl</module>
+    <module>security</module>
   </modules>
 
   <packaging>pom</packaging>
@@ -23,15 +23,14 @@
   <url>http://maven.apache.org</url>
   <!-- 管理子模块统一的版本号 -->
   <properties>
-    <java.version>1.8</java.version>
+    <java.version>17</java.version> <!-- 更新 JDK 版本 -->
     <thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
-    <!--<mysql.version>8.0.15</mysql.version>-->
     <shiro.version>1.4.0</shiro.version>
     <spring-boot.version>3.3.0</spring-boot.version>
     <shiro-redis.version>2.4.2.1-RELEASE</shiro-redis.version>
   </properties>
+
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
     <dependency>
       <groupId>com.alibaba</groupId>
       <artifactId>fastjson</artifactId>
@@ -79,6 +78,15 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version> <!-- 使用合适的版本 -->
+        <configuration>
+          <source>${java.version}</source> <!-- 使用 JDK 版本 -->
+          <target>${java.version}</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>
