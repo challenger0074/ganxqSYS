@@ -1,10 +1,10 @@
 package cn.ganxq.dbcontrol;
 
-import cn.ganxq.dbcontrol.entity.Users;
-import cn.ganxq.dbcontrol.controller.UsersController;
-import cn.ganxq.dbcontrol.mapper.UsersMapper;
+import cn.ganxq.dbcontrol.entity.User;
+import cn.ganxq.dbcontrol.controller.UserController;
+import cn.ganxq.dbcontrol.mapper.UserMapper;
 
-import cn.ganxq.dbcontrol.service.IUsersService;
+import cn.ganxq.dbcontrol.service.IUserService;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,46 +14,46 @@ import org.junit.jupiter.api.Test;
 class AutoApplicationTests {
 
   @Autowired
-    private IUsersService userService;
+    private IUserService userService;
 
     @Autowired
-    UsersController usersController;
+    UserController userController;
     @Autowired
-   UsersMapper usersMapper;
+    UserMapper userMapper;
 @Test
     void test1() {
-        Users users = new Users();
+        User user = new User();
 
-        users.setId(123);
-        users.setEmail(".000.");
-        users.setUsername("张三0");
-        users.setPassword("dfd2");
-        boolean flag=userService.save(users);
+        user.setId(123);
+        user.setEmail(".000.");
+        user.setUsername("张三0");
+        user.setPassword("dfd2");
+        boolean flag=userService.save(user);
         System.out.println(flag);
     }
 
 
 @Test
     void test2() {
-        Users users = new Users();
+        User user = new User();
 
-        users.setId(15);
-        users.setEmail("889");
-        users.setUsername("mkj");
-        users.setPassword("dfr2");
-       usersMapper.insert2User(users);
+        user.setId(15);
+        user.setEmail("889");
+        user.setUsername("mkj");
+        user.setPassword("dfr2");
+       userMapper.insert2User(user);
     }
 
     @Test
     void test() {
-        Users users = new Users();
+        User user = new User();
 
-        users.setId(15);
-        users.setEmail("889");
-        users.setUsername("mkj");
-        users.setPassword("dfr2");
-        Users users1 = usersController.findUsers();
-        String jsonString = JSONObject.toJSONString(JSONObject.toJSON(users1));
+        user.setId(15);
+        user.setEmail("889");
+        user.setUsername("mkj");
+        user.setPassword("dfr2");
+        User user1 = userController.findUsers();
+        String jsonString = JSONObject.toJSONString(JSONObject.toJSON(user1));
         System.out.println(jsonString);
     }
 }
