@@ -173,13 +173,24 @@ const search=()=>{
   getUserList();
 };
 const getUserList = () => {
-  service.get('/users/list', { params: queryInfo.value }).then(res => {
+
+
+
+
+  service.get('/users/list', {
+    params: queryInfo.value,
+    headers: { 'Authorization': localStorage.getItem('tokenValue') }
+  }).then(res => {
     console.log(res);
-    userList.value = res.data;
-    total.value = res.numbers;
+    userList.value = res.data || []; // 确保赋值时避免 undefined
+    total.value = res.numbers || 0;   // 同上
     disabled.value = userList.value.length === 0; // 更新分页禁用状态
+  }).catch(error => {
+    console.error('请求失败：', error);
+    // 可以在这里进行用户提示等处理
   });
 };
+
 
 const handleSizeChange = (newSize) => {
   queryInfo.value.pageSize = newSize;

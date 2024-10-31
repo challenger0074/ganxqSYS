@@ -19,6 +19,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="dbControl" options="-parameters" />
       <module name="security" options="-parameters" />
+      <module name="spring-boot" options="-parameters" />
     </option>
   </component>
 </project>

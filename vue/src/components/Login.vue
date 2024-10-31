@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <div class="login-container">
+    <div class="loginForm-container">
 
         <h1>Login</h1>
       <!-- 头像div -->
@@ -8,25 +8,25 @@
         <img src="../assets/logo.png" >
       </div>
         <el-form
-            ref="ruleFormRef"
+            ref="loginFormRef"
             style="max-width: 600px"
-            :model="ruleForm"
+            :model="loginForm"
             status-icon
             :rules="rules"
             label-width="80px"
-            class="demo-ruleForm login_form"
+            class="demo-loginForm login_form"
         >
           <el-form-item label="UserName" prop="username">
-            <el-input  v-model="ruleForm.username" placeholder="用户名"  prefix-icon="User" suffix-icon="User"/>
+            <el-input  v-model="loginForm.username" placeholder="用户名"  prefix-icon="User" suffix-icon="User"/>
           </el-form-item>
           <el-form-item label="Password" prop="pass">
-            <el-input v-model="ruleForm.pass" placeholder="密码" prefix-icon="Search" type="password" autocomplete="off" />
+            <el-input v-model="loginForm.password" placeholder="密码" prefix-icon="Search" type="password" autocomplete="off" suffix-icon="Search" />
           </el-form-item>
           <el-form-item class="btns">
-            <el-button type="primary" @click="submitForm(ruleFormRef)">
+            <el-button type="primary" @click="submitForm(loginFormRef)">
               Submit
             </el-button>
-            <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+            <el-button @click="resetForm(loginFormRef)">Reset</el-button>
             <el-button @click="register()">Regist</el-button>
           </el-form-item>
         </el-form>
@@ -40,13 +40,21 @@ import {reactive, ref, inject, getCurrentInstance} from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import service from '@/api/request.js'
 import { useRouter } from 'vue-router'; // Import useRouter
+interface RuleForm {
+  username: string
+  password: string
+}
+interface satToken {
+  code: number,
+  msg: string,
+  data: object
+}
 const toast=getCurrentInstance().appContext.config.globalProperties.$toast
-
 const router = useRouter(); // Initialize the router
-const ruleFormRef = ref<FormInstance>()
-const ruleForm = reactive({
+const loginFormRef = ref<FormInstance>()
+const loginForm = reactive<RuleForm>({
   username: '',
-  pass: '',
+  password: '',
 })
 const checkUsername = (rule: any, value: any, callback: any) => {
   if (value === '') {
@@ -77,13 +85,13 @@ const validatePass = (rule: any, value: any, callback: any) => {
   }
 }
 
-const rules = reactive<FormRules<typeof ruleForm>>({
+const rules = reactive<FormRules<typeof loginForm>>({
   username: [
     { validator: checkUsername, trigger: 'blur' },//blur失去焦点时触发验证,focus是得到焦点
     /*{ min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },*/
-    validateLength(3, 5),  // Using the new function here
+    validateLength(3, 25),  // Using the new function here
   ],
-  pass: [{ validator: validatePass, trigger: 'blur' }],
+  password: [{ validator: validatePass, trigger: 'blur' }],
 })
 
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -100,9 +108,18 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       console.log("Validation result:", valid);
       if (valid) {
         console.log('Validation succeeded, submitting data...');
-        const user = await service.get('/users/find');
+        console.log('loginForm',JSON.stringify(loginForm) )
+        const user = await service.get('/doLogin',{params:loginForm});
+        console.log("响应头headers"+user.headers)
+        // 从响应中获取 Authorization 头
+        const saData = user;
+        console.log("satoken传递到前端的数据", saData)
+        // 将 token 存储在 localStorage 中
+        localStorage.setItem('saData', saData);
+        localStorage.setItem('tokenValue', saData.data.tokenValue);
+        localStorage.setItem('tokenName', saData.data.tokenName);
         console.log("toast对象",toast)
-        const message = `login,success!
+        const message = `loginForm,success!
         welcome:${user.username}`;
         const duration = 2000; // 显示2秒
         const data=toast.show(message,duration)
@@ -112,7 +129,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         window.sessionStorage.setItem('ms_username',user.username);
         console.log('Response from API:', user);
         console.log('User data:', JSON.stringify(user));
-        router.push('reader/home')
+        /*router.push('reader/home')*/
         // Optionally, provide user feedback here
       } else {
         console.log('Validation failed, errors present.');
@@ -128,8 +145,9 @@ const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
 }
-const  register=()=>{
-  router.push('register')
+const  register= async ()=>{
+ await service.get('/test/isLogin')
+  /*router.push('register')*/
 }
 </script>
 <style lang="less" scoped>
@@ -138,7 +156,7 @@ const  register=()=>{
   width: 100%;
   height:100%;
 }
-.login-container {
+.loginForm-container {
   width: 450px;
   height: 300px;
   background-color: #fff;

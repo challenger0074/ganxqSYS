@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="form" :rules="rules" ref="formRef" label-width="120px" class="login-form">
+  <el-form :model="form" :rules="rules" ref="formRef" label-width="120px" class="loginForm-form">
     <el-form-item label="Username" prop="username">
       <el-input v-model="form.username" autocomplete="off" placeholder="Enter your username" />
     </el-form-item>
@@ -47,7 +47,7 @@ const rules = {
 const handleSubmit = () => {
   formRef.value.validate((valid) => {
     if (valid) {
-      // Handle login logic here
+      // Handle loginForm logic here
       console.log('Login successful!', form.value);
     } else {
       console.log('Form validation failed.');
@@ -58,7 +58,7 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
-.login-form {
+.loginForm-form {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;

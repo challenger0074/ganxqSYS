@@ -8,6 +8,14 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
     config => {
+       const tokenName =localStorage.getItem("tokenName");
+        const tokenValue= localStorage.getItem("tokenValue");
+        const saData= localStorage.getItem("saData");
+        config.headers['tokenName'] = tokenName;
+        config.headers['tokenValue'] = tokenValue;
+        config.headers['token']=saData;
+        config.headers[tokenName]=tokenValue;
+        // config.headers[tokenName]=JSON.stringify(tokenValue);
         // 可以在这里添加请求头等信息
         // 例如：config.headers['Authorization'] = 'Bearer your-token';
         return config;

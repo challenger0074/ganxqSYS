@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <div class="login-container">
+    <div class="loginForm-container">
         <el-form
             ref="ruleFormRef"
             style="max-width: 600px"
@@ -145,7 +145,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
   background-color:#2b4b6b;
   height:100%;
 }
-.login-container {
+.loginForm-container {
   width: 300px;
   position: absolute;
   top: 50%;

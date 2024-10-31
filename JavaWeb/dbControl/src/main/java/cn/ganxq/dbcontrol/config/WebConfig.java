@@ -11,6 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**") // Allow all endpoints
                 .allowedOrigins("http://localhost:1648") // Allow this origin
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // Allow these methods
+                .exposedHeaders("Authorization")// 设置暴露给前端的自定义响应头
                 .allowedHeaders("*") // Allow all headers
                 .allowCredentials(true); // Allow credentials if needed
     }

@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <div class="login-container">
+    <div class="loginForm-container">
 
       <h1>Login</h1>
       <!-- 头像div -->
@@ -126,7 +126,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
   width: 100%;
   height:100%;
 }
-.login-container {
+.loginForm-container {
   width: 450px;
   height: 300px;
   background-color: #fff;

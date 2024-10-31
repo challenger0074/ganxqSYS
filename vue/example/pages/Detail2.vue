@@ -1,7 +1,7 @@
 <template>
       <div name="Element-plus">
-<!--        <a href="/login/index2.html">跳转登录</a>-->
-        <a href="login/">跳转登录</a>
+<!--        <a href="/loginForm/index2.html">跳转登录</a>-->
+        <a href="loginForm/">跳转登录</a>
         <div>
            <el-menu
         :default-active="'1'"

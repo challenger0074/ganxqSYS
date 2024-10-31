@@ -68,6 +68,7 @@ public class UserController {
         user.setPassword("dfd24");
         return userService.getById(user);
     }
+    @CrossOrigin(origins = "http://localhost:1648")
     @ResponseBody
     @GetMapping("/list")
     public String getUserList(QueryInfo queryInfo){

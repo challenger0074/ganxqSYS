@@ -4,6 +4,7 @@ import cn.ganxq.dbcontrol.entity.Mainmenu;
 import cn.ganxq.dbcontrol.mapper.MainmenuMapper;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ import java.util.List;
 public class MainmenuController {
     @Autowired
     MainmenuMapper mapper;
+    @CrossOrigin(origins = "http://localhost:1648")
     @ResponseBody
     @GetMapping("/find")
     public String findMenus() {

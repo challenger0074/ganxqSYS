@@ -1,10 +1,10 @@
 <template>
   <div class="box">
-    <div class="login-container">
+    <div class="loginForm-container">
       <form @submit.prevent="handleLogin">
         <input type="text" v-model="username" placeholder="用户名"/>
         <input type="password" v-model="password" placeholder="密码"/>
-        <button type="submit" @click="login">登录</button>
+        <button type="submit" @click="loginForm">登录</button>
       </form>
       <div style="width: 250px;height:250px">
         <el-form
@@ -51,7 +51,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import {useLoginState} from '@/stores/state.ts'
 const username = ref('');
 const password = ref('');
-const login = useLoginState().change
+const loginForm = useLoginState().change
 const handleLogin = async () => {
   // 在此处添加登录逻辑，例如发送请求到服务器
   console.log('用户名:', username.value, '密码:', password.value);
@@ -156,7 +156,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 }
 </script>
 <style scoped>
-.login-container {
+.loginForm-container {
   width: 300px;
   position: absolute;
   top: 50%;
