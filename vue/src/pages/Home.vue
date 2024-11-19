@@ -56,7 +56,7 @@
                   @click="saveState(it.path)"
               >
                 <template #title>
-                  <el-icon><location /></el-icon>
+                  <el-icon><location/></el-icon>
                   <span>{{ it.title }}</span>
                 </template>
               </el-menu-item>

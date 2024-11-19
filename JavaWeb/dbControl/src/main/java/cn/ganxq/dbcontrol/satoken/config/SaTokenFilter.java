@@ -22,10 +22,14 @@ public class SaTokenFilter implements WebMvcConfigurer {
         return new SaServletFilter()
 
                 // 指定 [拦截路由] 与 [放行路由]
-                .addInclude("/**").addExclude("/favicon.ico")
+                .addInclude("/**").addExclude("/sso/*","/favicon.ico")
 
                 // 认证函数: 每次请求执行
                 .setAuth(obj -> {
+                    if(StpUtil.isLogin() == false) {
+                        // 与前端约定好，code=401时代表会话未登录
+                        SaRouter.back(SaResult.ok().setCode(401));
+                    }
                     SaManager.getLog().debug("----- 请求path={}  提交token={}", SaHolder.getRequest().getRequestPath(), StpUtil.getTokenValue());
                     // ...
                 })

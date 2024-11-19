@@ -1,4 +1,4 @@
-import { createStore } from 'vuex';
+/*import { createStore } from 'vuex';
 import moduleA from '../ganxq/store/index.js';
 import moduleB from '../reader/store/index.js';
 
@@ -9,4 +9,4 @@ const store = createStore({
     },
 });
 
-export default store;
+export default store;*/

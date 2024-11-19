@@ -1,11 +1,13 @@
 package cn.ganxq.dbcontrol.controller;
 
 
+import cn.ganxq.dbcontrol.common.CommonUtil;
 import cn.ganxq.dbcontrol.entity.User;
 import cn.ganxq.dbcontrol.service.IUserService;
 import cn.ganxq.dbcontrol.model.QueryInfo;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -82,5 +84,10 @@ public class UserController {
         String jsonString = JSON.toJSONString(res);
         return jsonString;
 
+    }
+    @PostMapping("/addRole")
+    public JSONObject addRole(@RequestBody JSONObject requestJson) {
+        CommonUtil.hasAllRequired(requestJson, "roleName,permissions");
+        return userService.addRole(requestJson);
     }
 }

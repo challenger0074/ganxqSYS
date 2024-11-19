@@ -15,7 +15,14 @@ const state = {
   list_panel: false,
   curBookDetailId: 1,
   curBookContentId: 1,
+
   employees: [],
+
+  nickname: "",
+  userId: "",
+  roleIds: [],
+  menus: [],
+  permissions: [],
 };
 
 export default createStore({

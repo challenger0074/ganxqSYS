@@ -18,20 +18,20 @@ public class MybatisPlusGenerator {
 
 //                            .fileOverride() // 覆盖已生成文件
                             .disableOpenDir() // 禁止打开输出目录
-                            .outputDir("C:\\project\\github\\ganxqSYS\\JavaWeb\\spring-boot-mybatis-plus\\src\\main\\java"); // 指定输出目录
+                            .outputDir("C:\\project\\github\\ganxqSYS\\JavaWeb\\dbControl\\src\\main\\java"); // 指定输出目录
                 })
                 .packageConfig(builder -> {
-                    builder.parent("cn.javastack.springboot.mybatisplus") // 设置父包名
+                    builder.parent("cn.ganxq.dbcontrol") // 设置父包名
                             .entity("entity") // 设置实体类包名
                             .mapper("mapper") // 设置 Mapper 接口包名
                             .pathInfo(Collections.singletonMap(OutputFile.xml,
-                                    "C:\\project\\github\\ganxqSYS\\JavaWeb\\spring-boot-mybatis-plus\\src\\main\\resources\\mapper")) // 设置mapperXml生成路径
+                                    "C:\\project\\github\\ganxqSYS\\JavaWeb\\dbControl\\src\\main\\resources\\mapper")) // 设置mapperXml生成路径
                             .service("service") // 设置 Service 接口包名
                             .serviceImpl("service.impl") // 设置 Service 实现类包名
                             .xml("mappers"); // 设置 Mapper XML 文件包名
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("mainmenu") // 设置需要生成的表名
+                    builder.addInclude("role_permissions") // 设置需要生成的表名
                             .entityBuilder()
                             .enableLombok() // 启用 Lombok
                             .enableTableFieldAnnotation() // 启用字段注解

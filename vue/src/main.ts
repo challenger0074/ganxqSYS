@@ -12,6 +12,7 @@ import showToast from './plugin/toast/index.js'
 import readerAPI from './reader/assets/js/utils'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import model from './plugin/model.js'
+import directives from './plugin/directive/index.js'
 // 创建
 const app =createApp(App);
 app.use(readerAPI)
@@ -27,4 +28,5 @@ app.use(ElementPlus)
 app.use(store)
 app.use(showToast)
 app.use(model)
+app.use(directives)
 app.mount('#app');

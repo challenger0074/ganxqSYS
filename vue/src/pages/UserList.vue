@@ -213,7 +213,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
       console.log('submit!', form); // 打印当前表单数据
 
       // 发送 POST 请求
-      service.post('http://localhost:8001/users/create', form)
+      service.post('/users/create', form)
           .then(response => {
             console.log('用户创建成功:', response);
             // 这里可以添加成功提示或其他操作

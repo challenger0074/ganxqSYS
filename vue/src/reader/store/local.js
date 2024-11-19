@@ -23,6 +23,11 @@ const localEvent = {
   },
 
   activeEmployees: state => state.employees.filter(emp => emp.status === 'active'),
+// 用户信息
+  nickname: state => state.nickname,
+  userId: state => state.userId,
+  roleIds: state => state.roleIds,
+  menus: state => state.menus,
+  permissions: state => state.permissions,
 };
-
 export default localEvent;
