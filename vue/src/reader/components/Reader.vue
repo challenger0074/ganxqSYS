@@ -30,7 +30,7 @@ import {ref, computed, watch, onMounted, getCurrentInstance} from 'vue';
 import {useStore} from 'vuex';
 import {useRoute} from 'vue-router';
 import axios from 'axios';
-import localEvent from '../store/local';
+import localEvent from '@/store/local';
 import TopNav from './TopNav/TopNav.vue';
 import BottomNav from './BottomNav/BottomNav.vue';
 import FontNav from './FontNav/FontNav.vue';

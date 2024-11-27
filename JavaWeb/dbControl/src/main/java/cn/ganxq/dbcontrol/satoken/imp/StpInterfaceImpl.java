@@ -52,8 +52,7 @@ public class StpInterfaceImpl implements StpInterface {
                     eq(RolePermissions::getRoleId, roleId));
             rolePermissions.forEach(permissionsId -> {
                 Permissions permissions = permissionsService.getById(permissionsId.getPermissionId());
-                list.add(permissions.getName());
-
+                list.add(permissions.getPermissionCode());
             });
         });
         list.add("101");

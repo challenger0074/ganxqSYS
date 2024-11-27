@@ -2,8 +2,14 @@ package cn.ganxq.dbcontrol.service.impl;
 
 import cn.ganxq.dbcontrol.common.CommonUtil;
 import cn.ganxq.dbcontrol.common.constants.ErrorEnum;
+import cn.ganxq.dbcontrol.entity.RolePermissions;
+import cn.ganxq.dbcontrol.entity.Roles;
 import cn.ganxq.dbcontrol.entity.User;
+import cn.ganxq.dbcontrol.entity.UserRoles;
+import cn.ganxq.dbcontrol.mapper.RolePermissionsMapper;
+import cn.ganxq.dbcontrol.mapper.RolesMapper;
 import cn.ganxq.dbcontrol.mapper.UserMapper;
+import cn.ganxq.dbcontrol.mapper.UserRolesMapper;
 import cn.ganxq.dbcontrol.model.QueryInfo;
 import cn.ganxq.dbcontrol.service.IUserService;
 import com.alibaba.fastjson.JSONObject;
@@ -29,7 +35,8 @@ import java.util.Set;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     @Autowired
     UserMapper mapper;
-
+    @Autowired
+    UserRolesMapper rolesMapper;
     @Override
     public boolean save1(User entity) {
 
@@ -54,10 +61,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         System.out.println("$$$$$$$$$$$$$$$$$"+SIZE);
         return userList;
     }
-
+/*1.普通用户 2.超级管理员 3.管理员*/
     @Override
     public void createUser(User user) {
         mapper.insert(user);//mybatisplus封装
+        int roleId = 0;
+        if (user.getRole().equals("普通用户")) {
+            roleId = 1;
+        } else if (user.getRole().equals("超级管理员")) {
+            roleId = 2;
+        } else if (user.getRole().equals("管理员")) {
+            roleId = 3;
+        }
+        UserRoles roles = new UserRoles();
+        roles.setRoleId(roleId);
+        roles.setUserId(user.getId());
+        rolesMapper.insert(roles);
     }
 
     /**

@@ -26,7 +26,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
-import localEvent from '../../store/local';
+import localEvent from '@/store/local';
 
 const store = useStore();
 const now_color = ref(0);

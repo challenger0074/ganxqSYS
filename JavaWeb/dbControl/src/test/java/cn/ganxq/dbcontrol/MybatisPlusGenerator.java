@@ -31,8 +31,8 @@ public class MybatisPlusGenerator {
                             .xml("mappers"); // 设置 Mapper XML 文件包名
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("role_permissions") // 设置需要生成的表名
-                            .entityBuilder()
+                    builder.addInclude("permissions") // 设置需要生成的表名
+                            .entityBuilder().enableFileOverride()
                             .enableLombok() // 启用 Lombok
                             .enableTableFieldAnnotation() // 启用字段注解
                             .controllerBuilder()
@@ -46,5 +46,5 @@ public class MybatisPlusGenerator {
                 .execute();
     }
 
-
+/*代码覆盖需要在每一个生成策略后加enableFileOverride()方法,不加的策略不覆盖*/
 }

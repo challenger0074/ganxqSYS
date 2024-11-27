@@ -1,6 +1,6 @@
 // 引入
 import { createPinia } from 'pinia';
-import store from './reader/store/index.js';
+import store from '@/store/index.js';
 /*import store from './ganxq/store/index.js';*/
 import {createApp} from 'vue';
 import App from './App.vue';

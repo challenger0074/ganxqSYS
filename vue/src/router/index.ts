@@ -18,7 +18,8 @@ import Test from '@/pages/Test.vue'
 import Register from '@/pages/login/registerForm.vue'
 import UserList  from "@/pages/UserList.vue"
 import Welcome  from "@/pages/Welcome.vue"
-import Authorization from "@/pages/authorization/Authorization.vue";
+import Authorization from "@/pages/authorization/Authorization.vue"
+import Music from "@/components/music/Music.vue";
   export const router= createRouter({
     history:createWebHistory(),//路由的工作模式
     routes:[//一个一个的路由规则
@@ -104,6 +105,11 @@ import Authorization from "@/pages/authorization/Authorization.vue";
                     name:'authorization',
                     path: 'rights',
                     component: Authorization
+                },
+                {
+                    name:'player',
+                    path:'player',
+                    component:Music
                 }
             ]
         },

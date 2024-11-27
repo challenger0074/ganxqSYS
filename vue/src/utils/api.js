@@ -1,7 +1,7 @@
 import axios from 'axios'
 /*import {Message} from 'element-plus'*/
 import {getToken} from '@/utils/auth'
-import store from '@/reader/store/index.js'
+import store from '@/store/index.js'
 // 创建axios实例
 const service = axios.create({
   baseURL: 'http://localhost:8001', // api的base_url

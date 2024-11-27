@@ -41,13 +41,6 @@
                 <el-icon><location /></el-icon>
                 <span>{{ item.title }}</span>
               </template>
-              <el-menu-item-group title="Group One">
-                <el-menu-item :index="`${item.id}-1`">Item One</el-menu-item>
-                <el-menu-item :index="`${item.id}-2`">Item Two</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="Group Two">
-                <el-menu-item :index="`${item.id}-3`">Item Three</el-menu-item>
-              </el-menu-item-group>
 
               <el-menu-item
                   v-for="it in item.slist"
@@ -60,11 +53,6 @@
                   <span>{{ it.title }}</span>
                 </template>
               </el-menu-item>
-
-              <el-sub-menu :index="`${item.id}-4`">
-                <template #title>Item Four</template>
-                <el-menu-item :index="`${item.id}-4-1`">Item One</el-menu-item>
-              </el-sub-menu>
             </el-sub-menu>
             <el-menu-item :index="String(20)">
               <el-icon><icon-menu /></el-icon>
