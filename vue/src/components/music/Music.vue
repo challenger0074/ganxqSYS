@@ -314,7 +314,7 @@ const changeSpeed = () => {
 const openMV = () => {
   const storageList = window.sessionStorage;
   storageList.setItem('musicId', musicId.value);
-  const url=new URL(`./mp4/video${musicId.value}.mp4`, import.meta.url).href;
+  const url=new URL(`./video.html`, import.meta.url).href;
   window.open(url);
 };
 
