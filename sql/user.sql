@@ -85,4 +85,5 @@ SET nickname = CASE
 END;
 ALTER TABLE file_storage.user MODIFY COLUMN `nickname` varchar(255) DEFAULT 'nickname' COMMENT '昵称';
 
---更新userId
+-- 更新userId
+-- 用户名后续修改为唯一

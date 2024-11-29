@@ -1,7 +1,12 @@
 <template>
     <el-container class="home-container">
-      <el-header style="">
-        <el-page-header :icon="null" >
+      <el-header >
+        <el-page-header :icon="Setting" @back="setting">
+          <template #title>
+            <span class="text-large font-600">
+              设置
+            </span>
+          </template>
           <template #content>
             <div class="flex items-center">
               <el-avatar
@@ -9,11 +14,10 @@
                   class="mr-3"
                   :src="img"
               />
-              <span class="text-large font-600 mr-3"> Title </span>
-              <span class="text-sm mr-2" style="color: var(--el-text-color-regular)">
-          Sub title
-        </span>
-              <el-tag>Default</el-tag>
+              <span class="text-sm mr-3" style="color: var(--el-text-color-regular)">
+              用户:{{ user?.username}},
+              </span>
+              <el-tag >音乐分享评论平台</el-tag>
             </div>
           </template>
           <template #extra>
@@ -83,17 +87,31 @@ import {
 } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
 import service from "@/api/request";
-
+interface UserForm {
+  username: string;
+}
+const user =ref<UserForm>()
 const img = new URL(`@/assets/img.png`, import.meta.url).href
 const activePath = ref('/welcome');
 const menuList = ref([]);
 const router = useRouter();
 const message = inject("$toast");
+const init=async () => {
+  console.log("init");
+  const res = await service.get('/getSession');
+  console.log("session:",res)
+  user.value=res.data;
+  console.log("user:",user.value?.username)
+}
 const saveState = (path: string) => {
   activePath.value = path;
   window.sessionStorage.setItem('activePath', path)
 }
+const setting = () => {
+  console.log("setting");
+}
 onMounted(() => {
+  init();
   getMenuList();
   message.show("成功加载", 2000);
   activePath.value=window.sessionStorage.getItem('activePath')

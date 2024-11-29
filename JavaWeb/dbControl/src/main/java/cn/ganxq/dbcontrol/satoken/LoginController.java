@@ -38,13 +38,25 @@ public class LoginController {
             return SaResult.error("密码错误");
         }
 
-// 第1步，先登录上
+        // 第1步，先登录上
         StpUtil.login(user.getId());
         // 第2步，获取 Token  相关参数
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
-        // 第3步，返回给前端
+        //第3步,把用户数据保存到session
+        StpUtil.getSession().set("user", user);
+        // 第4步，返回给前端
         return SaResult.data(tokenInfo);
 
+    }
+    // 新增：获取当前登录用户的 session 数据
+    @GetMapping("/getSession")
+    public SaResult getSession() {
+        // 获取当前用户的 session
+        Object user = StpUtil.getSession().get("user");
+        if (user == null) {
+            return SaResult.error("未登录或会话已过期");
+        }
+        return SaResult.data(user);
     }
 
     /*@RequestMapping("/doLogin")

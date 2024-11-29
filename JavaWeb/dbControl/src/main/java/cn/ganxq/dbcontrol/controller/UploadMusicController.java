@@ -9,10 +9,10 @@ import org.springframework.stereotype.Controller;
  * </p>
  *
  * @author ganxq
- * @since 2024-11-01
+ * @since 2024-11-29
  */
 @Controller
-@RequestMapping("/userRoles")
-public class UserRolesController {
+@RequestMapping("/uploadMusic")
+public class UploadMusicController {
 
 }

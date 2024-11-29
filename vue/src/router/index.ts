@@ -20,6 +20,7 @@ import UserList  from "@/pages/UserList.vue"
 import Welcome  from "@/pages/Welcome.vue"
 import Authorization from "@/pages/authorization/Authorization.vue"
 import Music from "@/components/music/Music.vue";
+import Upload from '@/components/music/UpLoad.vue'
   export const router= createRouter({
     history:createWebHistory(),//路由的工作模式
     routes:[//一个一个的路由规则
@@ -110,6 +111,11 @@ import Music from "@/components/music/Music.vue";
                     name:'player',
                     path:'player',
                     component:Music
+                },
+                {
+                    name:'mlist',
+                    path:'mlist',
+                    component:Upload
                 }
             ]
         },

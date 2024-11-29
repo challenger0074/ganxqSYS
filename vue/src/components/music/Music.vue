@@ -251,7 +251,7 @@ const initMusic =  () => {
 const initAndPlay = () => {
   initMusic();
   isPlaying.value = true;
-  audioTag.value.play();
+  togglePlayPause();//初始化为默认播放
   rotateRecord();
 };
 
