@@ -1,20 +1,30 @@
 package cn.ganxq.dbcontrol.entity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import lombok.Getter;
-import lombok.Setter;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * <p>
+ *
+ * </p>
+ *
+ * @author ganxq
+ * @since 2024-12-02
+ */
 @Getter
 @Setter
 @TableName("mainmenu")
-@ApiModel(value = "Mainmenu对象", description = "Represents a main menu with submenus")
+@ApiModel(value = "Mainmenu对象", description = "")
 public class Mainmenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,6 +38,8 @@ public class Mainmenu implements Serializable {
     @TableField("path")
     private String path;
 
+    @TableField("icon")
+    private String icon;
     // Initialize the list to avoid NullPointerException
     private List<Submenu> slist=new ArrayList<>() ;
 
@@ -37,7 +49,4 @@ public class Mainmenu implements Serializable {
     // No-argument constructor
     public Mainmenu() {
     }
-
-    // Override toString, equals, and hashCode methods if necessary
 }
-

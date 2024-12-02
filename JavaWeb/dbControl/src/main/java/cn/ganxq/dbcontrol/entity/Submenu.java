@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
-import java.util.List;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -14,11 +12,11 @@ import lombok.Setter;
 
 /**
  * <p>
- *
+ * 
  * </p>
  *
  * @author ganxq
- * @since 2024-10-15
+ * @since 2024-12-02
  */
 @Getter
 @Setter
@@ -40,4 +38,6 @@ public class Submenu implements Serializable {
     @TableField("mid")
     private Integer mid;
 
+    @TableField("icon")
+    private String icon;
 }

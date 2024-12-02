@@ -42,7 +42,10 @@
           >
             <el-sub-menu :index="item.path+''" v-for="item in menuList" :key="item.id">
               <template #title>
-                <el-icon><location /></el-icon>
+                <el-icon>
+                  <!-- 动态控制图标 -->
+                  <component :is="item.icon || 'more'" />
+                </el-icon>
                 <span>{{ item.title }}</span>
               </template>
 
@@ -53,23 +56,14 @@
                   @click="saveState(it.path)"
               >
                 <template #title>
-                  <el-icon><location/></el-icon>
+                  <el-icon>
+                    <!-- 动态控制图标 -->
+                    <component :is="item.icon || 'menu'" />
+                  </el-icon>
                   <span>{{ it.title }}</span>
                 </template>
               </el-menu-item>
             </el-sub-menu>
-            <el-menu-item :index="String(20)">
-              <el-icon><icon-menu /></el-icon>
-              <span>Navigator Two</span>
-            </el-menu-item>
-            <el-menu-item :index="String(30)" disabled>
-              <el-icon><document /></el-icon>
-              <span>Navigator Three</span>
-            </el-menu-item>
-            <el-menu-item :index="String(40)">
-              <el-icon><setting /></el-icon>
-              <span>Navigator Four</span>
-            </el-menu-item>
           </el-menu>
         </el-aside>
         <el-main><router-view></router-view></el-main>

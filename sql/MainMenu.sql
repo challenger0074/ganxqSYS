@@ -12,3 +12,5 @@ INSERT INTO file_storage.mainmenu (id,title, path) VALUES (4,'联系我们', '/c
 INSERT INTO file_storage.mainmenu (id,title, path) VALUES (5,'博客', '/blog');
 INSERT INTO file_storage.mainmenu (id,title, path) VALUES (100,'权限管理', '/admin');
 INSERT INTO file_storage.mainmenu (id,title, path) VALUES (200,'音乐平台', '/music');
+-- 添加图标名称字段
+alter table file_storage.mainmenu add column icon varchar(50) default '';

@@ -20,7 +20,9 @@ import UserList  from "@/pages/UserList.vue"
 import Welcome  from "@/pages/Welcome.vue"
 import Authorization from "@/pages/authorization/Authorization.vue"
 import Music from "@/components/music/Music.vue";
-import Upload from '@/components/music/UpLoad.vue'
+import MusicList from '@/components/music/list/MusicList.vue'
+import PrivateList from "@/components/music/list/PrivateList.vue";
+import PublicMusic from "@/components/music/list/PublicMusic.vue";
   export const router= createRouter({
     history:createWebHistory(),//路由的工作模式
     routes:[//一个一个的路由规则
@@ -115,7 +117,20 @@ import Upload from '@/components/music/UpLoad.vue'
                 {
                     name:'mlist',
                     path:'mlist',
-                    component:Upload
+                    component:MusicList,
+                    redirect:'mlist/private',
+                    children:[
+                        {
+                            name:'public',
+                            path:'public',
+                            component:PublicMusic
+                        },
+                        {
+                            name:'private',
+                            path:'private',
+                            component:PrivateList
+                        }
+                    ]
                 }
             ]
         },

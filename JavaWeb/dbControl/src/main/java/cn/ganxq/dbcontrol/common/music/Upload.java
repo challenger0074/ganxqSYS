@@ -1,15 +1,21 @@
 package cn.ganxq.dbcontrol.common.music;
 
 import cn.ganxq.dbcontrol.entity.UploadMusic;
+import cn.ganxq.dbcontrol.model.QueryInfo;
 import cn.ganxq.dbcontrol.service.IUploadMusicService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.logging.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/upload")
@@ -52,11 +58,15 @@ public class Upload {
 
         // 处理文件名冲突
         File targetFile = new File(userDir, fileName);
-        if (targetFile.exists()) {
-            String baseName = getBaseName(fileName);
-            String extension = getExtension(fileName);
-            targetFile = new File(userDir, baseName + "_new" + extension);
-            logger.info("Renaming the file to avoid conflict: " + targetFile.getName());
+        // 1. 查询数据库中是否已经有该音乐文件记录
+        List<UploadMusic> existingMusic = uploadMusicService.list(new QueryWrapper<UploadMusic>()
+                .eq("music_name", musicName)
+                .eq("upload_user", uploadUser));
+
+        if (existingMusic != null && !existingMusic.isEmpty()) {
+            // 如果数据库中已经存在该记录，返回上传失败
+            logger.warning("Music file already uploaded by the user: " + musicName);
+            return ResponseEntity.status(400).body("You have already uploaded this music file.");
         }
 
         // 保存文件
@@ -91,33 +101,93 @@ public class Upload {
             return ResponseEntity.badRequest().body("Invalid file type. Only .mp3 files are supported.");
         }
 
+        // 去除 .mp3 后缀，以便于查询数据库时使用的文件名
+        String fileNameWithoutExtension = fileName.substring(0, fileName.length() - 4);
+
         // 定位到用户文件目录
         File userDir = new File(TARGET_DIRECTORY, uploadUser);
         File targetFile = new File(userDir, fileName);
 
-        if (!targetFile.exists()) {
-            logger.warning("File not found: " + targetFile.getAbsolutePath());
-            return ResponseEntity.status(404).body("File not found.");
+        // 1. 查询数据库中是否有相关记录，基于 fileNameWithoutExtension 和 uploadUser
+        List<UploadMusic> existingMusic = uploadMusicService.list(new QueryWrapper<UploadMusic>()
+                .eq("music_name", fileNameWithoutExtension)
+                .eq("upload_user", uploadUser));  // MyBatis-Plus查询条件
+
+        if (existingMusic == null) {
+            logger.warning("File not found in the database: " + fileNameWithoutExtension);
+            return ResponseEntity.status(404).body("File not found in the database.");
         }
 
-        // 删除文件并返回响应
+        // 2. 删除数据库中的音乐记录
+        boolean deletedFromDb = uploadMusicService.remove(new QueryWrapper<UploadMusic>()
+                .eq("music_name", fileNameWithoutExtension)
+                .eq("upload_user", uploadUser));  // 使用QueryWrapper删除条件
+        if (!deletedFromDb) {
+            logger.warning("Failed to delete music info from database.");
+            return ResponseEntity.status(500).body("Failed to delete music info from database.");
+        }
+        logger.info("Music info deleted from database successfully.");
+
+        // 3. 删除文件系统中的文件
+        if (!targetFile.exists()) {
+            logger.warning("File not found in the file system: " + targetFile.getAbsolutePath());
+            return ResponseEntity.status(404).body("File not found in the file system.");
+        }
+
         if (targetFile.delete()) {
             logger.info("File deleted successfully: " + targetFile.getAbsolutePath());
-
-            // 删除数据库中的文件信息
-            boolean deleted = uploadMusicService.removeById(fileName);  // 使用 MyBatis-Plus 删除文件数据
-            if (deleted) {
-                logger.info("Music info deleted from database successfully.");
-            } else {
-                logger.warning("Failed to delete music info from database.");
-            }
-
-            return ResponseEntity.ok("File deleted successfully!");
+            return ResponseEntity.ok("File and database record deleted successfully!");
         } else {
             logger.warning("Failed to delete the file: " + targetFile.getAbsolutePath());
-            return ResponseEntity.status(500).body("Failed to delete the file.");
+            return ResponseEntity.status(500).body("Failed to delete the file from file system.");
         }
     }
+    //分页查询个人上传歌曲
+    @GetMapping("/music/list/{uploadUser}")
+    public ResponseEntity<Page<UploadMusic>> getMusicList(@PathVariable("uploadUser") String uploadUser, QueryInfo queryInfo) {
+        // 1. Create a Page object for pagination
+        Page<UploadMusic> page = new Page<>(queryInfo.getPageNum(), queryInfo.getPageSize());
+
+        // 2. Query the database for the music list uploaded by the user with pagination
+        Page<UploadMusic> musicPage = uploadMusicService.page(page, new QueryWrapper<UploadMusic>()
+                .eq("upload_user", uploadUser)  // MyBatis-Plus query condition
+                .like(queryInfo.getQuery() != null && !queryInfo.getQuery().isEmpty(), "music_name", queryInfo.getQuery())  // Optional search query for music name
+        );
+
+        // 3. If no music records are found, return an empty list (this is optional, depends on your use case)
+        if (musicPage.getRecords().isEmpty()) {
+            logger.info("No music found for the user: " + uploadUser);
+            return ResponseEntity.ok(musicPage);
+        }
+
+        // 4. Return the paginated list of music files
+        logger.info("Fetched paginated music list for user: " + uploadUser);
+        return ResponseEntity.ok(musicPage);
+    }
+//分页查询全部歌曲
+    @GetMapping("/music/list")
+    public ResponseEntity<Page<UploadMusic>> getMusicList(QueryInfo queryInfo) {
+        // 1. Create a Page object for pagination
+        Page<UploadMusic> page = new Page<>(queryInfo.getPageNum(), queryInfo.getPageSize());
+
+        // 2. Query the database for the music list with pagination (no user-specific filter)
+        Page<UploadMusic> musicPage = uploadMusicService.page(page, new QueryWrapper<UploadMusic>()
+                .like(queryInfo.getQuery() != null && !queryInfo.getQuery().isEmpty(), "music_name", queryInfo.getQuery())  // Optional search query for music name
+        );
+
+        // 3. If no music records are found, return an empty list (this is optional, depends on your use case)
+        if (musicPage.getRecords().isEmpty()) {
+            logger.info("No music found.");
+            return ResponseEntity.ok(musicPage);
+        }
+
+        // 4. Return the paginated list of music files
+        logger.info("Fetched paginated music list.");
+        return ResponseEntity.ok(musicPage);
+    }
+
+
+
 
     private String getBaseName(String originalFileName) {
         int dotIndex = originalFileName.lastIndexOf('.');

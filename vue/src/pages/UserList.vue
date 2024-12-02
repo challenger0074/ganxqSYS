@@ -173,10 +173,6 @@ const search=()=>{
   getUserList();
 };
 const getUserList = () => {
-
-
-
-
   service.get('/users/list', {
     params: queryInfo.value,
     headers: { 'Authorization': localStorage.getItem('tokenValue') }

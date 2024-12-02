@@ -31,12 +31,11 @@ public class MybatisPlusGenerator {
                             .xml("mappers"); // 设置 Mapper XML 文件包名
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("upload_music") // 设置需要生成的表名
-                            .entityBuilder().enableFileOverride()
+                    builder.addInclude("submenu") // 设置需要生成的表名
+                            .entityBuilder().enableFileOverride()//覆盖已生成的实体文件
                             .enableLombok() // 启用 Lombok
                             .enableTableFieldAnnotation() // 启用字段注解
                             .controllerBuilder()
-                            .enableFileOverride()//覆盖已生成文件
                             .mapperBuilder()
                             /*.enableRestStyle()*/; // 启用 REST 风格
 
