@@ -47,6 +47,7 @@ const form = ref<Form>({
   uploadUser: ''
 });
 
+const emit = defineEmits(['uploadSuccess']);
 const selectedFile = ref<File | null>(null);
 const fileNameToDelete = ref<string>('');
 const uploadedFileName = ref<string | null>(null);
@@ -101,6 +102,7 @@ const uploadFile = async (): Promise<void> => {
     // Handle successful upload
     console.log('文件上传成功', response.data);
     ElMessage.success('上传成功');
+    emit('uploadSuccess');
   } catch (error) {
     // Handle upload error
     console.error('上传失败', error);

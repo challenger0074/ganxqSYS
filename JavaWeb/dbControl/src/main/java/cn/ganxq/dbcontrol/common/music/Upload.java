@@ -4,6 +4,7 @@ import cn.ganxq.dbcontrol.entity.UploadMusic;
 import cn.ganxq.dbcontrol.model.QueryInfo;
 import cn.ganxq.dbcontrol.service.IUploadMusicService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class Upload {
 
     private static final String TARGET_DIRECTORY = "C:/project/db/music";
     private static final Logger logger = Logger.getLogger(Upload.class.getName());
-
+    private static final String PUBLIC_PATH = "/music_storage/";
     @Autowired
     private IUploadMusicService uploadMusicService; // 注入 IUploadMusicService
 
@@ -73,11 +74,14 @@ public class Upload {
         try {
             file.transferTo(targetFile);
             logger.info("File uploaded successfully: " + targetFile.getAbsolutePath());
-
+            // 构建公共路径
+            String storageLocation = PUBLIC_PATH + uploadUser + "/" + fileName;
+            // Set the storage location in the database (relative path)
             // 插入文件信息到数据库
             UploadMusic uploadMusic = new UploadMusic();
             uploadMusic.setMusicName(musicName);
             uploadMusic.setUploadUser(uploadUser);
+            uploadMusic.setStorageLocation(storageLocation);
             boolean saved = uploadMusicService.save(uploadMusic);  // 使用 MyBatis-Plus 插入数据库
             if (saved) {
                 logger.info("Music info saved to database successfully.");
@@ -166,12 +170,12 @@ public class Upload {
     }
 //分页查询全部歌曲
     @GetMapping("/music/list")
-    public ResponseEntity<Page<UploadMusic>> getMusicList(QueryInfo queryInfo) {
+    public ResponseEntity<IPage<UploadMusic>> getMusicList(QueryInfo queryInfo) {
         // 1. Create a Page object for pagination
         Page<UploadMusic> page = new Page<>(queryInfo.getPageNum(), queryInfo.getPageSize());
 
         // 2. Query the database for the music list with pagination (no user-specific filter)
-        Page<UploadMusic> musicPage = uploadMusicService.page(page, new QueryWrapper<UploadMusic>()
+        IPage<UploadMusic> musicPage = uploadMusicService.page(page, new QueryWrapper<UploadMusic>()
                 .like(queryInfo.getQuery() != null && !queryInfo.getQuery().isEmpty(), "music_name", queryInfo.getQuery())  // Optional search query for music name
         );
 

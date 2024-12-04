@@ -69,5 +69,12 @@ export default {
     state.roleIds = [];
     state.menus = [];
     state.permissions = [];
+  },
+
+  ADD_TO_PLAYLIST(state, music) {
+    // 检查是否已经存在该音乐以避免重复添加
+    if (!state.playlist.find(item => item.id === music.id)) {
+      state.playlist.push(music);
+    }
   }
 };

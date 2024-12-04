@@ -29,5 +29,7 @@ const localEvent = {
   roleIds: state => state.roleIds,
   menus: state => state.menus,
   permissions: state => state.permissions,
+
+  getPlaylist: state => state.playlist
 };
 export default localEvent;

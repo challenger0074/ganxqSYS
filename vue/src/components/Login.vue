@@ -129,7 +129,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         window.sessionStorage.setItem('ms_username',user.username);
         console.log('Response from API:', user);
         console.log('User data:', JSON.stringify(user));
-        /*router.push('reader/home')*/
+        router.push('/home/mlist/private')
         // Optionally, provide user feedback here
       } else {
         console.log('Validation failed, errors present.');

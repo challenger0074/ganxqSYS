@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * 微信公众号：Java技术栈
+ * author：ganxq
  */
 @MapperScan(basePackages = {"cn.ganxq.dbcontrol.mapper"})
 @SpringBootApplication

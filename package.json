@@ -4,9 +4,10 @@
   "description": "control",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"npm run web\" \"npm run serve\"",
+    "start": "concurrently \"npm run web\" \"npm run serve\" \"npm run mserve\"",
     "web": "cd vue&&npm run dev",
-    "serve": "cd server&&node reader.js"
+    "serve": "cd server&&node reader.js",
+    "mserve": "cd server&&node app.js"
   },
   "author": "",
   "license": "ISC",

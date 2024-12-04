@@ -58,6 +58,19 @@ public class LoginController {
         }
         return SaResult.data(user);
     }
+    /**
+     * 注销
+     * @return
+     */
+    @RequestMapping("/signOut")
+    public SaResult signOut() {
+        String loginId = null;
+        if (StpUtil.isLogin()){
+            loginId = (String) StpUtil.getLoginId();
+            StpUtil.logout();
+        }
+        return SaResult.ok("会话ID为 " + loginId + " 的用户注销登录成功");
+    }
 
     /*@RequestMapping("/doLogin")
     public void doLogin(@RequestParam String username, @RequestParam String password) {

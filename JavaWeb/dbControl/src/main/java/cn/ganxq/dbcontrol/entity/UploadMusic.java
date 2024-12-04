@@ -16,7 +16,7 @@ import lombok.Setter;
  * </p>
  *
  * @author ganxq
- * @since 2024-11-29
+ * @since 2024-12-03
  */
 @Getter
 @Setter
@@ -34,4 +34,7 @@ public class UploadMusic implements Serializable {
 
     @TableField("upload_user")
     private String uploadUser;
+
+    @TableField("storage_location")
+    private String storageLocation;
 }

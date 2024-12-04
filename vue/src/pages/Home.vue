@@ -23,7 +23,7 @@
           <template #extra>
             <div class="flex items-center">
               <el-button>Print</el-button>
-              <el-button type="primary" class="ml-2">Edit</el-button>
+              <el-button type="primary" class="ml-2" @click="logout">注销</el-button>
             </div>
           </template>
         </el-page-header>
@@ -58,7 +58,7 @@
                 <template #title>
                   <el-icon>
                     <!-- 动态控制图标 -->
-                    <component :is="item.icon || 'menu'" />
+                    <component :is="it.icon || 'menu'" />
                   </el-icon>
                   <span>{{ it.title }}</span>
                 </template>
@@ -81,6 +81,7 @@ import {
 } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
 import service from "@/api/request";
+import {ElMessage} from "element-plus";
 interface UserForm {
   username: string;
 }
@@ -104,6 +105,7 @@ const saveState = (path: string) => {
 const setting = () => {
   console.log("setting");
 }
+
 onMounted(() => {
   init();
   getMenuList();
@@ -119,10 +121,29 @@ const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
 }
 
-const logout = () => {
-  window.sessionStorage.clear();
-  router.push('/login');
+const logout = async () => {
+  try {
+    // 调用后端的注销接口
+    const response = await service.post('/signOut');
+    console.log(response);
+
+    // 清除 session storage
+    window.sessionStorage.clear();
+    //清除 local storage
+    localStorage.clear();
+    // 重置用户信息
+    user.value = undefined;
+
+    // 重定向到登录页面
+    router.push('/login');
+
+    // 显示注销成功的提示
+    ElMessage.success("注销成功");
+  } catch (error) {
+    ElMessage.error("注销失败");
+  }
 }
+
 
 const getMenuList = async () => {
   const res = await service.get('/menu/find');

@@ -23,6 +23,7 @@ import Music from "@/components/music/Music.vue";
 import MusicList from '@/components/music/list/MusicList.vue'
 import PrivateList from "@/components/music/list/PrivateList.vue";
 import PublicMusic from "@/components/music/list/PublicMusic.vue";
+import Playlist from "@/components/music/list/Playlist.vue";
   export const router= createRouter({
     history:createWebHistory(),//路由的工作模式
     routes:[//一个一个的路由规则
@@ -113,6 +114,11 @@ import PublicMusic from "@/components/music/list/PublicMusic.vue";
                     name:'player',
                     path:'player',
                     component:Music
+                },
+                {
+                    name:'playlist',
+                    path:'playlist',
+                    component:Playlist
                 },
                 {
                     name:'mlist',

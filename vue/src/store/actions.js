@@ -48,4 +48,8 @@ export default {
   deleteEmployee({ commit }, employeeId) {
     commit('DELETE_EMPLOYEE', employeeId);
   },
+
+  addToPlaylist({ commit }, music) {
+    commit('ADD_TO_PLAYLIST', music);
+  }
 };

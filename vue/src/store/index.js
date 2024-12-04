@@ -23,6 +23,8 @@ const state = {
   roleIds: [],
   menus: [],
   permissions: [],
+
+  playlist: []
 };
 
 export default createStore({
