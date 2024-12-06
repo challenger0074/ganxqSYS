@@ -1,17 +1,17 @@
 <template>
-  <div id="body" ref="body" :style="{ backgroundImage: `url(${img(musicId.value)})` }">
+  <div id="body" ref="body" :style="{ backgroundImage: `url(${img})` }">
     <div class="upper-container">
       <!-- 唱片背景 -->
       <div class="record-container">
         <div class="record-bg">
-          <div id="record-img" class="rotate-play" :style="{ backgroundImage: `url(${img(musicId.value)})` }"></div>
+          <div id="record-img" class="rotate-play" :style="{ backgroundImage: `url(${record})` }"></div>
         </div>
       </div>
       <!-- 音乐介绍 -->
       <div class="introduction-container">
         <div class="text-container">
-          <div id="music-title" ref="musicTitle">{{ musicTitle }}</div>
-          <div class="author-container">作者：
+          <div id="music-title">{{ musicTitle }}</div>
+          <div class="author-container">上传用户：
             <span id="author-name">{{ author }}</span>
           </div>
         </div>
@@ -21,7 +21,7 @@
     <!-- 音乐播放器主要内容 -->
     <div class="audio-box">
       <div class="audio-container">
-        <audio ref="audio" id="audioTag" @ended="onAudioEnded" @timeupdate="updateProgress"></audio>
+        <audio ref="audioTag" id="audioTag" @ended="onAudioEnded" @timeupdate="updateProgress" @canplay="getDuration" preload="auto"></audio>
 
         <!-- 进度条 -->
         <div class="a-progress" @click="seekToPosition">
@@ -41,17 +41,17 @@
           <!-- 中间按钮 -->
           <div class="center-button-container">
             <!-- 播放模式 -->
-            <div id="playMode" class="center-icon mode" @click="changePlayMode"></div>
+            <div id="playMode" ref="playMode" class="center-icon mode" @click="changePlayMode"></div>
             <!-- 上一首 -->
             <div id="skipForward" class="center-icon s-right" @click="prevSong"></div>
             <!-- 暂停按钮 -->
-            <div id="playPause" class="icon-play" @click="togglePlayPause"></div>
+            <div id="playPause" ref="playPause" class="icon-play" @click="togglePlayPause"></div>
             <!-- 下一首 -->
             <div id="skipBackward" class="center-icon s-left" @click="nextSong"></div>
             <!-- 音量调节 -->
             <div id="volume" class="center-icon volume" @click="toggleMute"></div>
             <!-- 音量悬浮窗 -->
-            <input type="range" id="volumn-togger" name="change" v-model="volume" min="0" max="100" step="1">
+            <input type="range" id="volumn-togger" ref="volumnTogger" name="change" v-model="volume" min="0" max="100" step="1">
           </div>
 
           <!-- 后部按钮 -->
@@ -68,73 +68,99 @@
     </div>
 
     <!-- 音乐列表 -->
-    <div class="close-list" v-show="isListVisible" @click="closeList"></div>
-    <div class="music-list" v-show="isListVisible">
+    <div class="close-list" ref="close_list"></div>
+    <div class="music-list" id="music-list" ref="list">
       <div class="music-list-container">
         <div class="music-list-title">播放队列</div>
         <hr class="line">
         <div class="all-list">
-          <div v-for="(song, index) in musicData" :key="index" @click="selectMusic(index)">
-            {{ song[0] }}
-          </div>
+          <playlist ref="playlistComponent" @preSong="selectMusic" @nextSong="selectMusic" @select="selectMusic"></playlist>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, computed } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted, computed, watch, nextTick } from 'vue';
+import Playlist from "@/components/music/list/Playlist.vue";
+import service from "@/api/request";
+
+interface Music {
+  id: number;
+  musicName: string;
+  uploadUser: string;
+  storageLocation: string;
+}
 
 // 定义响应式数据
-const audio = ref(null);
+const playlistComponent = ref<any>(null);
+const audioTag = ref(new Audio());
 const musicId = ref(0);
 const musicTitle = ref('');
 const author = ref('');
-const playedTime = ref('00:00');
+const playedTime = ref('00:00'); // 已播放时间
+const currentTime = ref(0); // 当前播放时间
 const audioTime = ref('00:00');
 const isPlaying = ref(false);
-const isListVisible = ref(false);
 const isMuted = ref(false);
 const volume = ref(70);
 const modeId = ref(1);
 const speedText = ref('1.0X');
-const musicData = [
-  ['洛春赋', '云汐'],
-  ['Yesterday', 'Alok/Sofi Tukker'],
-  ['江南烟雨色', '杨树人'],
-  ['Vision pt.II', 'Vicetone']
-];
-const img=(value)=>{
-  if (value==null)
-  return  new URL(`./img/bg0.png`, import.meta.url).href;
-  return  new URL(`./img/bg0.png`, import.meta.url).href
+const list = ref(); // 列表
+const close_list = ref(); // 关闭按钮
+const playPause = ref(); // 播放暂停按钮
+const duration = ref(0); // 音频时长
+const volumnTogger = ref(); // 音乐滑块操作dom,未使用
+const playMode = ref(); // 播放模式按钮
+const selectedMusic = ref<Music | null>(null);
 
+const getDuration = () => {
+  duration.value = audioTag.value.duration;
+  console.log("duration", duration.value);
 };
+
+// 默认背景
+const img = ref(new URL(`./img/bg0.png`, import.meta.url).href);
+const record = ref(new URL(`./img/record0.jpg`, import.meta.url).href);
+
+// 监听 audioTag 变化，确保 duration 或 currentTime 改变时更新 progressWidth
+watch(duration, (newDuration) => {
+  if (newDuration > 0)
+    audioTime.value = transTime(duration.value);
+  console.log('audioTag的duration变化', newDuration);
+});
+
 // 计算属性
 const progressWidth = computed(() => {
-  if (audio.value && !isNaN(audio.value.duration)) {
-    return (audio.value.currentTime / audio.value.duration) * 100;
+  if (audioTag.value && duration.value) {
+    return (currentTime.value / duration.value) * 100;
   }
   return 0;
 });
 
-// 方法
+// 播放,暂停按钮方法
 const togglePlayPause = () => {
-  if (audio.value.paused) {
-    audio.value.play();
+  if (audioTag.value.paused) {
+    audioTag.value.play();
     rotateRecord();
     isPlaying.value = true;
+    playPause.value.classList.remove('icon-play');
+    playPause.value.classList.add('icon-pause');
   } else {
-    audio.value.pause();
+    audioTag.value.pause();
     rotateRecordStop();
     isPlaying.value = false;
+    playPause.value.classList.add('icon-play');
+    playPause.value.classList.remove('icon-pause');
   }
 };
 
+// 更新时间回调方法,顺便获取currentTime到vue,vue内部无法监听
 const updateProgress = () => {
-  if (audio.value && !isNaN(audio.value.duration)) {
-    playedTime.value = transTime(audio.value.currentTime);
+  if (audioTag.value && duration.value) {
+    playedTime.value = transTime(audioTag.value.currentTime);
+    currentTime.value = audioTag.value.currentTime;
   }
 };
 
@@ -163,35 +189,50 @@ const formatTime = (value) => {
   return time;
 };
 
+// 定位进度条
 const seekToPosition = (event) => {
-  if (audio.value && !audio.value.paused && audio.value.currentTime !== 0) {
+  if (audioTag.value && !audioTag.value.paused && audioTag.value.currentTime !== 0) {
     const pgsWidth = parseFloat(window.getComputedStyle(event.target, null).width.replace('px', ''));
     const rate = event.offsetX / pgsWidth;
-    audio.value.currentTime = audio.value.duration * rate;
+    audioTag.value.currentTime = audioTag.value.duration * rate;
     updateProgress();
   }
 };
 
 const showList = () => {
-  isListVisible.value = true;
+  list.value.classList.remove("list-card-hide");
+  list.value.classList.add("list-card-show");
+  list.value.style.display = "flex";
+  close_list.value.style.display = "flex";
+  close_list.value.addEventListener('click', closeListBoard);
 };
 
-const closeList = () => {
-  isListVisible.value = false;
+const closeListBoard = () => {
+  list.value.classList.remove("list-card-show");
+  list.value.classList.add("list-card-hide");
+  close_list.value.style.display = "none";
 };
 
-const selectMusic = (id) => {
-  musicId.value = id;
+const selectMusic = (music: Music) => {
+  selectedMusic.value = music;
   initAndPlay();
 };
 
 const initMusic = () => {
-  audio.value.src = `mp3/music${musicId.value}.mp3`;
-  audio.value.load();
-  musicTitle.value = musicData[musicId.value][0];
-  author.value = musicData[musicId.value][1];
-  audioTime.value = transTime(audio.value.duration);
-  audio.value.currentTime = 0;
+  if (!selectedMusic.value) return;
+
+  // Set the new source
+  audioTag.value.src = new URL(`${service.defaults.baseURL}${selectedMusic.value.storageLocation}`, import.meta.url).href;
+
+  // Wait for the DOM to be updated and the new source to be loaded
+  audioTag.value.load();
+
+  // Set metadata and other properties after the load
+  musicTitle.value = selectedMusic.value.musicName;
+  author.value = selectedMusic.value.uploadUser;
+  audioTime.value = transTime(duration.value);
+  audioTag.value.currentTime = 0;
+  // Update progress and rotation
   updateProgress();
   refreshRotate();
 };
@@ -199,12 +240,15 @@ const initMusic = () => {
 const initAndPlay = () => {
   initMusic();
   isPlaying.value = true;
-  audio.value.play();
+  togglePlayPause(); // 初始化为默认播放
   rotateRecord();
 };
 
 const changePlayMode = () => {
   modeId.value = (modeId.value % 3) + 1;
+  const url = new URL(`./img/mode${modeId.value}.png`, import.meta.url).href;
+  console.log("模式图片url", url);
+  playMode.value.style.backgroundImage = `url(${url})`;
 };
 
 const onAudioEnded = () => {
@@ -223,41 +267,47 @@ const onAudioEnded = () => {
   initAndPlay();
 };
 
+// 上一首
 const prevSong = () => {
-  musicId.value = (musicId.value - 1 + 4) % 4;
-  initAndPlay();
+  if (playlistComponent.value) {
+    playlistComponent.value.playPrevious();
+  }
 };
 
+// 下一首
 const nextSong = () => {
-  musicId.value = (musicId.value + 1) % 4;
-  initAndPlay();
+  if (playlistComponent.value) {
+    playlistComponent.value.playNext();
+  }
 };
 
 const changeSpeed = () => {
   switch (speedText.value) {
     case '1.0X':
       speedText.value = '1.5X';
-      audio.value.playbackRate = 1.5;
+      audioTag.value.playbackRate = 1.5;
+      console.log("速度", audioTag.value.playbackRate);
       break;
     case '1.5X':
       speedText.value = '2.0X';
-      audio.value.playbackRate = 2.0;
+      audioTag.value.playbackRate = 2.0;
       break;
     case '2.0X':
       speedText.value = '0.5X';
-      audio.value.playbackRate = 0.5;
+      audioTag.value.playbackRate = 0.5;
       break;
     case '0.5X':
       speedText.value = '1.0X';
-      audio.value.playbackRate = 1.0;
+      audioTag.value.playbackRate = 1.0;
       break;
   }
 };
 
 const openMV = () => {
-  const storageList = window.sessionStorage;
+  /*const storageList = window.sessionStorage;
   storageList.setItem('musicId', musicId.value);
-  window.open('video.html');
+  const url=new URL(`./video.html`, import.meta.url).href;
+  window.open(url);*/
 };
 
 const refreshRotate = () => {
@@ -275,8 +325,13 @@ const rotateRecordStop = () => {
   recordImg.style.animationPlayState = 'paused';
 };
 
+watch(volume, () => {
+  updateVolume();
+});
+
 const updateVolume = () => {
-  audio.value.volume = volume.value / 100;
+  audioTag.value.volume = volume.value / 100;
+  console.log("更新音量", audioTag.value.volume);
 };
 
 const toggleMute = () => {
@@ -289,10 +344,12 @@ const toggleMute = () => {
 };
 
 // 生命周期钩子
-onMounted(() => {
-  initAndPlay();
-  audio.value.addEventListener('timeupdate', updateProgress);
-  audio.value.addEventListener('volumechange', updateVolume);
+onMounted(async () => {
+  await nextTick();
+  if (playlistComponent.value && playlistComponent.value.playlist.length > 0) {
+    selectedMusic.value = playlistComponent.value.playlist[0];
+    initAndPlay();
+  }
 });
 </script>
 
@@ -300,3 +357,6 @@ onMounted(() => {
 /* 添加你的样式 */
 @import url("./css/audio.css");
 </style>
+
+
+

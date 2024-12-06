@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <el-card>
       <el-table :data="musicList" style="width: 100%" @row-click="playMusic">
         <el-table-column prop="musicName" label="Music Name" />
@@ -8,6 +7,7 @@
         <el-table-column label="Actions">
           <template #default="{ row }">
             <el-button @click.stop="addToPlaylist(row)" type="danger">加入歌单</el-button>
+            <el-button @click.stop="downloadMusic(row)">下载歌曲</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -29,7 +29,7 @@
     <!-- Audio Player -->
     <div v-if="selectedMusic" class="audio-player">
       <h3>{{ selectedMusic.musicName }}</h3>
-      <audio controls autoplay  ref="audioPlayer">
+      <audio controls autoplay ref="audioPlayer">
         <source :src="`${service.defaults.baseURL}${selectedMusic.storageLocation}`" type="audio/mpeg">
         Your browser does not support the audio element.
       </audio>
@@ -39,9 +39,7 @@
 
 <script setup lang="ts">
 import {nextTick, onMounted, reactive, ref} from 'vue';
-import { Search } from '@element-plus/icons-vue';
 import service from '@/api/request'; // Assuming you have axios or similar API service
-import UpLoad from '@/components/music/UpLoad.vue';
 import {useStore} from "vuex";
 
 interface UserForm {
@@ -57,6 +55,7 @@ interface Music {
   id: number;
   musicName: string;
   uploadUser: string;
+  storageLocation: string; // Ensure this property exists in your Music interface
 }
 
 const user = ref<UserForm>();
@@ -73,9 +72,7 @@ const disabled = ref(false);
 const background = ref(true);
 const selectedMusic = ref<Music | null>(null);
 const store = useStore();
-const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
+
 // Fetch music list on component mount
 const fetchMusicList = async () => {
   try {
@@ -90,6 +87,7 @@ const fetchMusicList = async () => {
     console.error('Error fetching music list:', error);
   }
 };
+
 // Initialize the component, get user session, and set uploadUser
 const init = async () => {
   console.log("init");
@@ -98,7 +96,8 @@ const init = async () => {
   user.value = res.data;
   console.log("user:", user.value?.username);
   fetchMusicList();
-}
+};
+
 // Handle pagination change
 const handleSizeChange = (newSize: number) => {
   queryInfo.pageSize = newSize;
@@ -109,22 +108,60 @@ const handleCurrentChange = (newPage: number) => {
   queryInfo.pageNum = newPage;
   fetchMusicList();
 };
-//添加进歌单
+
+// 添加进歌单
 const addToPlaylist = (music) => {
   store.dispatch('addToPlaylist', music);
 };
 
+// 下载音乐
+const downloadMusic = async (music: Music) => {
+  try {
+    const tokenName = localStorage.getItem("tokenName");
+    const tokenValue = localStorage.getItem("tokenValue");
 
-// Handle delete music (implement backend delete logic)
-const deleteMusic = (id: number) => {
-  service.delete(`/upload/music/${id}`).then(() => {
-    fetchMusicList(); // Re-fetch music list after deletion
-  }).catch(err => {
-    console.error('Error deleting music:', err);
-  });
+    if (!tokenName || !tokenValue) {
+      console.error('Token not found');
+      return;
+    }
+
+    // 构建下载链接
+    const musicId = music.id;
+    const downloadUrl = `${service.defaults.baseURL}/music/download/${musicId}`;
+
+    // 发起带token的请求
+    const response = await service({
+      url: downloadUrl,
+      method: 'GET',
+      responseType: 'blob', // 重要：指定响应类型为blob
+      headers: {
+        [tokenName]: tokenValue, // 使用从localStorage获取的token
+      }
+    });
+
+    // 创建一个Blob对象
+    const blob = new Blob([response.data], { type: 'audio/mpeg' });
+
+    // 创建一个临时的URL来触发下载
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = music.musicName || 'unknown'; // 设置下载文件名
+    link.style.display = 'none';
+
+    // 添加到DOM中并触发点击事件
+    document.body.appendChild(link);
+    link.click();
+
+    // 移除 <a> 元素和释放URL对象
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading music:', error);
+  }
 };
-// Play music when a row is clicked
 
+// Play music when a row is clicked
 const playMusic = (row: Music) => {
   selectedMusic.value = row;
   nextTick(() => { // Ensure DOM is updated before manipulating the audio element
@@ -149,4 +186,10 @@ onMounted(() => {
   margin-bottom: 15px;
   font-size: 12px;
 }
+.audio-player {
+  margin-top: 20px;
+}
 </style>
+
+
+

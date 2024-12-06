@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -189,7 +192,35 @@ public class Upload {
         logger.info("Fetched paginated music list.");
         return ResponseEntity.ok(musicPage);
     }
+    // 下载音乐文件
+    @GetMapping("/music/download/{musicId}")
+    public ResponseEntity<FileSystemResource> downloadMusicFile(@PathVariable("musicId") Long musicId) {
+        // 查询数据库获取音乐文件信息
+        UploadMusic uploadMusic = uploadMusicService.getById(musicId);
+        if (uploadMusic == null) {
+            logger.warning("Music file not found with ID: " + musicId);
+            return ResponseEntity.notFound().build();
+        }
 
+        // 构建文件路径
+        String filePath = TARGET_DIRECTORY + uploadMusic.getStorageLocation().substring(PUBLIC_PATH.length());
+        File file = new File(filePath);
+
+        if (!file.exists()) {
+            logger.warning("File not found in the file system: " + file.getAbsolutePath());
+            return ResponseEntity.notFound().build();
+        }
+
+        // 设置响应头
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + uploadMusic.getMusicName() + "\"");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("audio/mpeg"))
+                .body(new FileSystemResource(file));
+    }
 
 
 

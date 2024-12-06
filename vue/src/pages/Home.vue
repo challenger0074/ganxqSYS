@@ -17,7 +17,7 @@
               <span class="text-sm mr-3" style="color: var(--el-text-color-regular)">
               用户:{{ user?.username}},
               </span>
-              <el-tag >音乐分享评论平台</el-tag>
+              <el-tag >音乐共享平台</el-tag>
             </div>
           </template>
           <template #extra>
