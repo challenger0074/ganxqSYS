@@ -1,13 +1,14 @@
 import axios  from "axios";
 // 创建axios实例
 const service = axios.create({
-    baseURL: import.meta.env.VITE_SERVER_PORT, // api的base_url
+    baseURL: import.meta.env.VITE_SERVER_PORT || "http://localhost:80/sp", // api的base_url
     timeout: 5000 // 请求超时时间
 });
 
 // 请求拦截器
 service.interceptors.request.use(
     config => {
+        config.headers['Content-Type'] = 'application/json;charset=UTF-8'
        const tokenName =localStorage.getItem("tokenName");
         const tokenValue= localStorage.getItem("tokenValue");
         const saData= localStorage.getItem("saData");

@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [
     vue(),
   ],
-
+   base: '/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
@@ -28,6 +28,11 @@ export default defineConfig({
 			  target: 'http://127.0.0.1:3001',
 			  changeOrigin: true,
 			  rewrite: (path) => path.replace(/^\/api/, '')
+		  },
+		  '/sp': {
+			  target: 'http://127.0.0.1:8001',
+			  changeOrigin: true,
+			  rewrite: (path) => path.replace(/^\/sp/, '')
 		  }
 	  }
 

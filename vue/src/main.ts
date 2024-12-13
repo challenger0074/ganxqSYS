@@ -13,6 +13,7 @@ import readerAPI from './reader/assets/js/utils'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import model from './plugin/model.js'
 import directives from './plugin/directive/index.js'
+import path from "path";
 // 创建
 const app =createApp(App);
 app.use(readerAPI)
@@ -30,3 +31,4 @@ app.use(showToast)
 app.use(model)
 app.use(directives)
 app.mount('#app');
+console.log("node_env",process.env.NODE_ENV)

@@ -11,3 +11,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log('Server running on http://localhost:3000');
 });
+console.log("__dir",`file://${path.join(__dirname, "../dist/index.html")}`);

@@ -119,7 +119,7 @@ const fetchMusicList = async () => {
 // Initialize the component, get user session, and set uploadUser
 const init = async () => {
   console.log("init");
-  const res = await service.get('/getSession');
+  const res = await service.get('entry/getSession');
   console.log("session:", res);
   user.value = res.data;
   console.log("user:", user.value?.username);

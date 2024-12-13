@@ -24,8 +24,9 @@ import MusicList from '@/components/music/list/MusicList.vue'
 import PrivateList from "@/components/music/list/PrivateList.vue";
 import PublicMusic from "@/components/music/list/PublicMusic.vue";
 import Playlist from "@/components/music/list/Playlist.vue";
+import * as process from "process";
   export const router= createRouter({
-    history:createWebHistory(),//路由的工作模式
+    history:createWebHistory(import.meta.env.BASE_URL || '/'),//路由的工作模式
     routes:[//一个一个的路由规则
         {
             path:'/',

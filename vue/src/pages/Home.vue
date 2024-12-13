@@ -93,7 +93,7 @@ const router = useRouter();
 const message = inject("$toast");
 const init=async () => {
   console.log("init");
-  const res = await service.get('/getSession');
+  const res = await service.get('entry/getSession');
   console.log("session:",res)
   user.value=res.data;
   console.log("user:",user.value?.username)

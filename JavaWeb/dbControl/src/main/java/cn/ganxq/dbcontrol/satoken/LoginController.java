@@ -9,8 +9,10 @@ import cn.ganxq.dbcontrol.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.servlet.ServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@RequestMapping("/entry")
 @RestController
 public class LoginController {
     @Autowired
@@ -26,8 +28,8 @@ public class LoginController {
     public String toLogin() {
         return "please login!";
     }
-    @GetMapping("/doLogin")
-    public SaResult doLogin(LoginForm loginForm, ServletResponse response) {
+    @PostMapping("/doLogin")
+    public SaResult doLogin(@RequestBody LoginForm loginForm, ServletResponse response) {
         System.out.println("用户：" + loginForm);
         //根据用户名从数据库中查询
         User user = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, loginForm.getUsername()));
@@ -47,6 +49,23 @@ public class LoginController {
         // 第4步，返回给前端
         return SaResult.data(tokenInfo);
 
+    }
+    /**
+     * 创建用户
+     *
+     * @param user 用户信息
+     * @return 创建成功的响应
+     */
+    @PostMapping("/register")
+    public ResponseEntity<String> userRegister(@RequestBody User user) {
+        try {
+            userService.createUser(user); // 调用服务层方法保存用户
+            return ResponseEntity.ok("用户创建成功");
+        } catch (Exception e) {
+            // 处理异常并返回错误信息
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("注册失败: " + e.getMessage());
+        }
     }
     // 新增：获取当前登录用户的 session 数据
     @GetMapping("/getSession")

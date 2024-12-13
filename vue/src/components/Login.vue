@@ -39,7 +39,8 @@
 import {reactive, ref, inject, getCurrentInstance} from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import service from '@/api/request.js'
-import { useRouter } from 'vue-router'; // Import useRouter
+import { useRouter } from 'vue-router';
+import axios from "axios"; // Import useRouter
 interface RuleForm {
   username: string
   password: string
@@ -103,13 +104,17 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     return;
   }
 
-  try {
+
     await formEl.validate(async (valid) => {
       console.log("Validation result:", valid);
       if (valid) {
         console.log('Validation succeeded, submitting data...');
         console.log('loginForm',JSON.stringify(loginForm) )
-        const user = await service.get('/doLogin',{params:loginForm});
+        const user = await service.post('/entry/doLogin',JSON.stringify(loginForm),{
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
         console.log("响应头headers"+user.headers)
         // 从响应中获取 Authorization 头
         const saData = user;
@@ -136,10 +141,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         // Provide feedback on validation errors here
       }
     });
-  } catch (validationError) {
-    console.error('Validation error:', validationError);
-    // Optionally, handle the validation error
-  }
+
 };
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return

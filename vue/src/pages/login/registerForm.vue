@@ -1,39 +1,39 @@
 <template>
   <div class="box">
     <div class="loginForm-container">
-        <el-form
-            ref="ruleFormRef"
-            style="max-width: 600px"
-            :model="ruleForm"
-            status-icon
-            :rules="rules"
-            label-width="auto"
-            class="demo-ruleForm"
-        >
-          <el-form-item label="UserName" prop="username">
-            <el-input  v-model="ruleForm.username" placeholder="用户名"  prefix-icon="User" suffix-icon="User"/>
-          </el-form-item>
-          <el-form-item label="Password" prop="pass">
-            <el-input v-model="ruleForm.pass" placeholder="密码" prefix-icon="Search" type="password" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="Confirm"  prop="checkPass">
-            <el-input
-                v-model="ruleForm.checkPass"
-                type="password"
-                autocomplete="off"
-                placeholder="重复密码"
-            />
-          </el-form-item>
-          <el-form-item label="Age" prop="age">
-            <el-input v-model.number="ruleForm.age" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submitForm(ruleFormRef)">
-              Submit
-            </el-button>
-            <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
-          </el-form-item>
-        </el-form>
+      <el-form
+          ref="ruleFormRef"
+          style="max-width: 600px"
+          :model="ruleForm"
+          status-icon
+          :rules="rules"
+          label-width="auto"
+          class="demo-ruleForm"
+      >
+        <el-form-item label="UserName" prop="username">
+          <el-input v-model="ruleForm.username" placeholder="用户名" prefix-icon="User" />
+        </el-form-item>
+        <el-form-item label="Password" prop="password">
+          <el-input v-model="ruleForm.password" placeholder="密码" prefix-icon="Search" type="password" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="Confirm" prop="checkPass">
+          <el-input
+              v-model="ruleForm.checkPass"
+              type="password"
+              autocomplete="off"
+              placeholder="重复密码"
+          />
+        </el-form-item>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="ruleForm.email" placeholder="电子邮箱" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm(ruleFormRef)">
+            Submit
+          </el-button>
+          <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -41,16 +41,18 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import {useLoginState} from '@/stores/state.ts'
-
+import service from "@/api/request";
 
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
   username: '',
-  pass: '',
+  password: '',
   checkPass: '',
-  age: '',
+  email: '', //  email
+  role: '普通用户',//默认普通用户
+  state: 1, //默认为1启用
 })
+
 const checkUsername = (rule: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('Please input the username'))
@@ -58,9 +60,10 @@ const checkUsername = (rule: any, value: any, callback: any) => {
     callback()
   }
 }
-const validateLength = (min, max) => {
+
+const validateLength = (min: number, max: number) => {
   return {
-    validator: (rule, value, callback) => {
+    validator: (rule: any, value: any, callback: any) => {
       if (!value) {
         return callback(new Error('Please input the username'));
       }
@@ -73,21 +76,16 @@ const validateLength = (min, max) => {
   };
 };
 
-const checkAge = (rule: any, value: any, callback: any) => {
-  if (!value) {
-    return callback(new Error('Please input the age'))
+// New validation for email
+const validateEmail = (rule: any, value: any, callback: any) => {
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (value === '') {
+    callback(new Error('Please input the email address'));
+  } else if (!emailPattern.test(value)) {
+    callback(new Error('Please enter a valid email address'));
+  } else {
+    callback();
   }
-  setTimeout(() => {
-    if (!Number.isInteger(value)) {
-      callback(new Error('Please input digits'))
-    } else {
-      if (value < 18) {
-        callback(new Error('Age must be greater than 18'))
-      } else {
-        callback()
-      }
-    }
-  }, 1000)
 }
 
 const validatePass = (rule: any, value: any, callback: any) => {
@@ -104,24 +102,21 @@ const validatePass = (rule: any, value: any, callback: any) => {
 const validatePass2 = (rule: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('Please input the password again'))
-  } else if (value !== ruleForm.pass) {
+  } else if (value !== ruleForm.password) {
     callback(new Error("Two inputs don't match!"))
   } else {
     callback()
   }
 }
 
-
-
-const rules = reactive<FormRules<typeof ruleForm>>({
+const rules = reactive<FormRules>({
   username: [
-    { validator: checkUsername, trigger: 'blur' },//blur失去焦点时触发验证,focus是得到焦点
-    /*{ min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },*/
-    validateLength(3, 5),  // Using the new function here
+    { validator: checkUsername, trigger: 'blur' },
+    validateLength(3, 15),
   ],
-  pass: [{ validator: validatePass, trigger: 'blur' }],
+  password: [{ validator: validatePass, trigger: 'blur' }],
   checkPass: [{ validator: validatePass2, trigger: 'blur' }],
-  age: [{ validator: checkAge, trigger: 'blur' }],
+  email: [{ validator: validateEmail, trigger: 'blur' }], // Changed rule for email
 })
 
 const submitForm = (formEl: FormInstance | undefined) => {
@@ -129,6 +124,11 @@ const submitForm = (formEl: FormInstance | undefined) => {
   formEl.validate((valid) => {
     if (valid) {
       console.log('submit!')
+      service.post('entry/register', ruleForm).then(response => {
+        console.log('Registration successful:', response)
+      }).catch(error => {
+        console.error('Error during registration:', error)
+      })
     } else {
       console.log('error submit!')
     }
@@ -140,6 +140,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
   formEl.resetFields()
 }
 </script>
+
 <style scoped>
 .box{
   background-color:#2b4b6b;
@@ -156,5 +157,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
   border-radius: 5px;
   background-color: #f8f9fa;
 }
-
 </style>
+
+
+
