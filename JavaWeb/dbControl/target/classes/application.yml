@@ -18,6 +18,9 @@ sa-token:
   is-log: true
 
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   servlet:
     multipart:
       max-file-size: 10485760  # 10MB的字节数

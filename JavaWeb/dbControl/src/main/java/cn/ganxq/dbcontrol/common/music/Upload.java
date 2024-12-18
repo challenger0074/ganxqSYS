@@ -32,8 +32,7 @@ public class Upload {
     private IUploadMusicService uploadMusicService; // 注入 IUploadMusicService
 
     @PostMapping("/music")
-    public ResponseEntity<String> uploadMusicFile(
-            @RequestParam("file") MultipartFile file,
+    public ResponseEntity<String> uploadMusicFile(@RequestParam("file") MultipartFile file,
             @RequestParam("musicName") String musicName,
             @RequestParam("uploadUser") String uploadUser) {
 

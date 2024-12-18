@@ -5,9 +5,11 @@ import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Configuration
@@ -21,12 +23,26 @@ public class SaTokenConfigure implements WebMvcConfigurer {
     }*/
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+//#######################拦截器过滤器有冲突,启用一个就好
         // 注册 Sa-Token 拦截器，校验规则为 StpUtil.checkLogin() 登录校验。
-        registry.addInterceptor(new SaInterceptor(handle -> StpUtil.checkLogin()))
-                .addPathPatterns("/**")
-                .excludePathPatterns("/entry/**")
-                .excludePathPatterns("/music_storage/**");
+//        registry.addInterceptor(new SaInterceptor(handle -> StpUtil.checkLogin()))
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/entry/**")
+//                .excludePathPatterns(
+//                        // knife4j文档地址
+//                        "/doc.html",
+//                        // swagger-ui, 没必要放开
+//                        "/swagger-ui/**",
+//                        // webjars
+//                        "/webjars/**",
+//                        // api
+//                        "/v3/api-docs/**",
+//                        // 我的习惯, 方便调试, 你可以不用
+//                        "/error")
+//                .excludePathPatterns("/music_storage/**");
     }
+
+
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
 //        // 注册 Sa-Token 拦截器，定义详细认证规则

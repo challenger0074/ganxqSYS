@@ -22,7 +22,13 @@ public class SaTokenFilter implements WebMvcConfigurer {
         return new SaServletFilter()
 
                 // 指定 [拦截路由] 与 [放行路由]
-                .addInclude("/**").addExclude("/sso/*","/favicon.ico","/music_storage/**","/entry/**")
+                .addInclude("/**").addExclude("/sso/*","/music_storage/**","/entry/**",
+                        "/favicon.ico",
+                        "/music_storage/**",
+                        "/entry/**",
+                        "/swagger-ui/**",
+                        "/v3/**",
+                        "/swagger-resources/**" )
 
                 // 认证函数: 每次请求执行
                 .setAuth(obj -> {
