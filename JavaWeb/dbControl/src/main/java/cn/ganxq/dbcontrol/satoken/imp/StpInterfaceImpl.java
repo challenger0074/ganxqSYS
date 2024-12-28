@@ -55,6 +55,7 @@ public class StpInterfaceImpl implements StpInterface {
                 list.add(permissions.getPermissionCode());
             });
         });
+        //admin:manager 允许管理其他用户
         list.add("101");
         list.add("user.add");
         list.add("user.update");

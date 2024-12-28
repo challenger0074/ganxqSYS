@@ -18,9 +18,9 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="dbControl" options="-parameters" />
-      <module name="security" options="-parameters" />
-      <module name="spring-boot" options="-parameters" />
+      <module name="dbControl" options="" />
+      <module name="security" options="" />
+      <module name="spring-boot" options="" />
     </option>
   </component>
 </project>

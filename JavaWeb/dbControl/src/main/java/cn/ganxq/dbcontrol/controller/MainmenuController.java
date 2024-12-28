@@ -1,5 +1,6 @@
 package cn.ganxq.dbcontrol.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.ganxq.dbcontrol.entity.Mainmenu;
 import cn.ganxq.dbcontrol.mapper.MainmenuMapper;
 import com.alibaba.fastjson.JSON;
@@ -30,8 +31,15 @@ public class MainmenuController {
     @ResponseBody
     @GetMapping("/find")
     public String findMenus() {
+        //查询当前账号是否含有指定权限，返回true或false
+        boolean b = StpUtil.hasPermission("admin:manager");//是否有管理权限
         HashMap<String, Object> data= new HashMap<>();
         List<Mainmenu> mainMenus = mapper.getMainMenus();
+        if (!b){
+            mainMenus.remove(5);
+            System.out.println("不具有管理员权限"+b);
+        }
+        System.out.println(mainMenus.toArray());
         data.put("menus",mainMenus);
         data.put("flag",200);
         String jsonString = JSON.toJSONString(data);
